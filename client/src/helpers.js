@@ -1,11 +1,17 @@
 const getCostByQntRange = (ranges, rangePropName, qnt) =>
-  ranges.filter(item => {
-    if (item[rangePropName] === 'all') {
+  ranges.filter((item) => {
+    if (item[rangePropName] === "all") {
       return true;
     }
-    const [min, max] = item[rangePropName].split(':');
+    const [min, max] = item[rangePropName].split(":");
     return qnt > min && qnt < max;
   })[0].value * qnt;
+
+export const getNameFromPropTypeValue = (rackValues, racksProps, typeValue) => {
+  rackValues[typeValue] = racksProps[typeValue].filter(
+    (item) => item.type === rackValues[typeValue]
+  )[0].name;
+};
 
 export const getValuesFromRackState = ({
   shelf: {
@@ -21,7 +27,7 @@ export const getValuesFromRackState = ({
 
 export const getProductPropValues = (productPropValues, prop) => [
   ...new Set(
-    productPropValues.map(item =>
+    productPropValues.map((item) =>
       item.name ? { title: item.name, value: item[prop] } : item[prop]
     )
   ),
@@ -35,13 +41,13 @@ export const createActiveInputs = (
   propName
 ) =>
   productProps[group]
-    .filter(props => {
+    .filter((props) => {
       if (props[changedPropName] !== changedPropValue) {
         return false;
       }
       return true;
     })
-    .map(props => props[propName]);
+    .map((props) => props[propName]);
 
 export const calculateTotalPrice = (rackState, productProps) => {
   const {
@@ -56,14 +62,14 @@ export const calculateTotalPrice = (rackState, productProps) => {
     subDelivery,
   } = getValuesFromRackState(rackState);
 
-  const [{ price: shelfPrice }] = productProps.shelf.filter(item => {
+  const [{ price: shelfPrice }] = productProps.shelf.filter((item) => {
     if (item.depth === depth && item.width === width) {
       return true;
     }
     return false;
   });
 
-  const [{ price: rackPrice }] = productProps.rack.filter(item => {
+  const [{ price: rackPrice }] = productProps.rack.filter((item) => {
     if (item.height === height && item.load === load) {
       return true;
     }
@@ -71,21 +77,21 @@ export const calculateTotalPrice = (rackState, productProps) => {
   });
 
   const installCost = productProps.installation
-    .filter(item => installation.includes(item.type))
-    .map(item =>
+    .filter((item) => installation.includes(item.type))
+    .map((item) =>
       item.price.length
-        ? getCostByQntRange(item.price, 'shelvesQuantity', shelvesQuantity)
+        ? getCostByQntRange(item.price, "shelvesQuantity", shelvesQuantity)
         : item.price
     )
     .reduce((accum, current) => accum + current);
 
   let deliveryCost = 0;
-  if (delivery !== 'self_delivery') {
+  if (delivery !== "self_delivery") {
     deliveryCost += productProps.delivery.filter(
-      item => item.type === delivery
+      (item) => item.type === delivery
     )[0].price;
     deliveryCost += productProps.subDelivery.filter(
-      item => item.type === subDelivery
+      (item) => item.type === subDelivery
     )[0].price;
   }
 
