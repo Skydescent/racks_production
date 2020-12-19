@@ -1,15 +1,14 @@
 const express = require("express");
 const path = require("path");
 const nodemailer = require("nodemailer");
+
 const app = express(),
   bodyParser = require("body-parser");
 port = 3080;
 
-// place holder for the data
-const users = [];
-
 app.use(bodyParser.json());
-app.use(express.static(path.join(__dirname, "../racks/build")));
+
+app.use(express.static(path.join(__dirname, "client/build")));
 
 app.post("/api/send", (req, res) => {
   const output = `
@@ -67,8 +66,8 @@ app.post("/api/send", (req, res) => {
   });
 });
 
-app.get("/", (req, res) => {
-  res.sendFile(path.join(__dirname, "../racks/build/index.html"));
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "/client/build/index.html"));
 });
 
 app.listen(port, () => {
