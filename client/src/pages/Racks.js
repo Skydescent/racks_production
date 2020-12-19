@@ -1,18 +1,18 @@
-import React, { useState } from 'react';
-import InputsField from '../components/InputsField';
-import QuantitySlider from '../components/QuantitySlider';
-import Total from '../components/Total';
+import React, { useState } from "react";
+import InputsField from "../components/InputsField";
+import QuantitySlider from "../components/QuantitySlider";
+import Total from "../components/Total";
 
 import {
   getProductPropValues,
   createActiveInputs,
   calculateTotalPrice,
   getValuesFromRackState,
-} from '../helpers';
+} from "../helpers";
 
-import { sendMail } from '../services/MailService';
+import { sendMail } from "../services/MailService";
 
-import { racksProps, initialRack } from '../products/racks';
+import { racksProps, initialRack } from "../products/racks";
 
 const Racks = () => {
   const [rackState, setRackState] = useState(initialRack);
@@ -24,13 +24,13 @@ const Racks = () => {
   });
 
   const handleInputChange = (propGroup, propName, value) => {
-    setRackState(prev => {
+    setRackState((prev) => {
       const newRack = { ...prev };
-      if (['installation', 'delivery', 'subDelivery'].includes(propGroup)) {
+      if (["installation", "delivery", "subDelivery"].includes(propGroup)) {
         newRack[propGroup] = value;
       } else {
         const relatedProp = Object.keys(prev[propGroup]).filter(
-          relatedPropName => relatedPropName !== propName
+          (relatedPropName) => relatedPropName !== propName
         )[0];
 
         const newActiveInputs = createActiveInputs(
@@ -50,7 +50,7 @@ const Racks = () => {
   };
 
   const handleQuantitySliderMove = (propGroup, value) => {
-    setRackState(prev => {
+    setRackState((prev) => {
       const newRack = { ...prev };
       newRack[propGroup] = value;
       newRack.total = calculateTotalPrice(newRack, racksProps);
@@ -58,22 +58,34 @@ const Racks = () => {
     });
   };
 
-  const handleSendOrderMail = e => {
+  const handleSendOrderMail = (e) => {
     e.preventDefault();
 
     // Валидация полей формы заказа
     if (!orderState.phone && !orderState.email) {
-      alert('Поля телефон и/или почта должны быть заполнены!');
+      alert("Поля телефон и/или почта должны быть заполнены!");
       return;
     }
     const rackValues = getValuesFromRackState(rackState);
-    if (rackValues.delivery === 'self_delivery') {
-      rackValues.subDelivery = '';
+
+    rackValues.installation = racksProps.installation.filter(
+      (item) => item.type === rackValues.installation
+    )[0].name;
+    rackValues.delivery = racksProps.delivery.filter(
+      (item) => item.type === rackValues.delivery
+    )[0].name;
+    rackValues.subDelivery = racksProps.subDelivery.filter(
+      (item) => item.type === rackValues.subDelivery
+    )[0].name;
+
+    if (rackValues.delivery === "самовывоз") {
+      rackValues.subDelivery = "";
     }
+
     const data = { ...orderState, ...rackValues };
 
-    sendMail(data).then(response => {
-      if (response.result === 'success') {
+    sendMail(data).then((response) => {
+      if (response.result === "success") {
         setOrder(() => ({
           email: null,
           phone: null,
@@ -92,8 +104,8 @@ const Racks = () => {
     });
   };
 
-  const handleFormChange = e => {
-    setOrder(prev => {
+  const handleFormChange = (e) => {
+    setOrder((prev) => {
       const newOrder = { ...prev };
       newOrder[e.target.name] = e.target.value;
       return newOrder;
@@ -150,26 +162,26 @@ const Racks = () => {
         <div className="calc">
           <div>Изображение</div>
           <div>
-            {renderInputsField('rack', 'height', 'Высота стеллажа, см')}
-            {renderInputsField('shelf', 'depth', 'Глубина полки см')}
-            {renderInputsField('shelf', 'width', 'Ширина полки, см')}
-            {renderInputsField('rack', 'load', 'Нагрузка на стеллаж, кг')}
+            {renderInputsField("rack", "height", "Высота стеллажа, см")}
+            {renderInputsField("shelf", "depth", "Глубина полки см")}
+            {renderInputsField("shelf", "width", "Ширина полки, см")}
+            {renderInputsField("rack", "load", "Нагрузка на стеллаж, кг")}
             <div className="flex grid_2 range">
               {renderQuantitySliderMove(
-                'Количество полок',
+                "Количество полок",
                 2,
                 10,
                 1,
-                'shelf',
-                'shelvesQuantity'
+                "shelf",
+                "shelvesQuantity"
               )}
               {renderQuantitySliderMove(
-                'Количество стеллажей',
+                "Количество стеллажей",
                 1,
                 10,
                 1,
-                'rack',
-                'racksQuantity'
+                "rack",
+                "racksQuantity"
               )}
             </div>
             <div className="total">
@@ -180,10 +192,10 @@ const Racks = () => {
                 handleFormChange={handleFormChange}
                 isOrderSend={orderState.isOrderSend}
               />
-              {renderInputsField('delivery', 'type', 'Доставка')}
-              {rackState.delivery === 'self_delivery' ||
-                renderInputsField('subDelivery', 'type', '')}
-              {renderInputsField('installation', 'type', 'Сборка')}
+              {renderInputsField("delivery", "type", "Доставка")}
+              {rackState.delivery === "self_delivery" ||
+                renderInputsField("subDelivery", "type", "")}
+              {renderInputsField("installation", "type", "Сборка")}
             </div>
           </div>
         </div>

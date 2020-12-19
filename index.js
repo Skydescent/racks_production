@@ -17,17 +17,15 @@ app.post("/api/send", (req, res) => {
         <li>Электронный адрес: ${req.body.email}</li>
         <li>Высота стеллажа, см: ${req.body.height}</li>
         <li>Глубина полки, см: ${req.body.depth}</li>
-        <li>Ширина полки, см: ${req.body.widht}</li>
+        <li>Ширина полки, см: ${req.body.width}</li>
         <li>Нагрузка на стеллаж, кг: ${req.body.load}</li>
         <li>Количество полок: ${req.body.shelvesQuantity}</li>
         <li>Количество стеллажей: ${req.body.racksQuantity}</li>
         <li>Комментарий к заказу: ${req.body.comment}</li>
-        <li>Доставка: ${req.body.delivery + req.body.subDelivery}</li>
+        <li>Доставка: ${req.body.delivery + " " + req.body.subDelivery}</li>
         <li>Сборка: ${req.body.installation}</li>
         <li>Сумма: ${req.body.total}</li>
       </ul>
-      <h3>Message</h3>
-      <p>${req.body.message}</p>
     `;
 
   // create reusable transporter object using the default SMTP transport
@@ -47,7 +45,7 @@ app.post("/api/send", (req, res) => {
   // setup email data with unicode symbols
   let mailOptions = {
     from: '"Новый заказ" <krl@skydescent.su>', // sender address
-    to: "kirill310587@mail.ru, skylineed@gmail.com", // list of receivers
+    to: "kirill310587@mail.ru, Stellage-tomsk@mail.ru", // list of receivers
     subject: "Новый заказ на стеллаж", // Subject line
     text: "", // plain text body
     html: output, // html body
