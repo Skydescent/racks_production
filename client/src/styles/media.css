@@ -1,0 +1,149 @@
+@media only screen and (min-width: 1024px) {
+  body {
+    font-weight: 400;
+  }
+
+  /* Main */
+  .content-inner {
+    max-width: 1200px;
+    padding: 0;
+  }
+
+  /* Header */
+  .header {
+    justify-content: space-between;
+    -webkit-justify-content: space-between;
+  }
+
+  .header div:nth-child(2),
+  .header div:nth-child(3) {
+    display: block;
+  }
+
+  /* Calc & Product */
+  .calc,
+  .product_calc {
+    display: flex;
+    justify-content: space-between;
+    -webkit-justify-content: space-between;
+    padding: 1em 0;
+    max-width: 1200px;
+    margin: 0 auto;
+  }
+
+  .calc > div:first-child,
+  .product_calc > div:first-child {
+    display: flex;
+    align-items: center;
+    width: 40%;
+  }
+
+  .calc > div:first-child img,
+  .product_calc > div:first-child img {
+    display: block;
+    max-width: 100%;
+    width: auto;
+    height: auto;
+  }
+
+  .calc > div:last-child,
+  .product_calc > div:last-child {
+    width: 60%;
+    /*background: rgba(0,0,0,.1);*/
+  }
+
+  .product > div {
+    min-height: calc(100vh - 140px);
+    align-items: center;
+    -webkit-align-items: center;
+    padding-bottom: 0;
+    margin: 0;
+  }
+
+  .calc p,
+  .product_calc p {
+    min-width: 14.28%;
+    /*background: #eee;*/
+  }
+
+  /* Total */
+  .total .price {
+    width: 100%;
+    justify-content: space-between;
+    -webkit-justify-content: space-between;
+    padding: 0.4em;
+    padding-left: 1em;
+    color: rgba(255, 255, 255, 1);
+    background: rgba(44, 62, 80, 1);
+    border-radius: 2em;
+  }
+
+  .total .price > div:nth-child(1) {
+    min-width: 20%;
+    margin-right: 0;
+    order: 1;
+  }
+
+  .total .price > div:nth-child(2) {
+    width: 50%;
+    order: 2;
+    padding-top: 0;
+  }
+
+  .total .price > div:nth-child(3) {
+    min-width: 10%;
+    order: 3;
+  }
+
+  /* Section */
+  .flex {
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;
+    -webkit-flex-wrap: wrap;
+    justify-content: space-between;
+    -webkit-justify-content: space-between;
+  }
+
+  .grid_2 > div {
+    width: 45%;
+  }
+
+  .info-block {
+    padding: 3em 0;
+  }
+
+  .info-block div:first-child {
+    padding: 0;
+    margin-bottom: 0;
+    border-bottom: none;
+  }
+
+  /* Зачистить */
+  /* Обозвать универсально сделать правило для блока в 2-3 колонки с разделителем */
+  .range {
+    width: 100%;
+    margin-top: 1em;
+    padding-top: 1em;
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .range > div {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+  }
+
+  .value {
+    width: 100%;
+    margin-bottom: 1em;
+    padding-bottom: 1em;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  }
+
+  .value > div {
+    width: auto;
+    max-width: 50%;
+  }
+  /*  Конец */
+}
