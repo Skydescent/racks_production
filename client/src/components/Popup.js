@@ -1,8 +1,9 @@
-import React from 'react';
-import Popup from 'reactjs-popup';
-import OrderForm from './OrderForm';
-import SuccessOrder from './SuccessOrder';
+import React from "react";
+import Popup from "reactjs-popup";
+import OrderForm from "./OrderForm";
+import SuccessOrder from "./SuccessOrder";
 
+// eslint-disable-next-line import/no-anonymous-default-export
 export default ({ handleSendOrderMail, handleFormChange, isOrderSend }) => {
   let content;
 
@@ -19,7 +20,7 @@ export default ({ handleSendOrderMail, handleFormChange, isOrderSend }) => {
 
   return (
     <Popup trigger={<a href="#order">Заказать</a>} modal nested>
-      {close => (
+      {(close) => (
         <div className="modal">
           <button type="button" className="close" onClick={close}>
             &times;

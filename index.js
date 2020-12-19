@@ -4,7 +4,6 @@ const nodemailer = require("nodemailer");
 
 const app = express(),
   bodyParser = require("body-parser");
-port = 5000;
 
 app.use(bodyParser.json());
 
@@ -69,6 +68,8 @@ app.post("/api/send", (req, res) => {
 app.get("*", (req, res) => {
   res.sendFile(path.join(__dirname, "/client/build/index.html"));
 });
+
+const port = process.env.PORT || 5000;
 
 app.listen(port, () => {
   console.log(`Server listening on the port::${port}`);
