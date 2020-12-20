@@ -7,7 +7,7 @@ import {
   getProductPropValues,
   createActiveInputs,
   calculateTotalPrice,
-  getValuesFromRackState,
+  getNamesFromRackState,
 } from "../helpers";
 
 import { sendMail } from "../services/MailService";
@@ -66,23 +66,9 @@ const Racks = () => {
       alert("Поля телефон и/или почта должны быть заполнены!");
       return;
     }
-    const rackValues = getValuesFromRackState(rackState);
+    const rackNames = getNamesFromRackState(rackState, racksProps);
 
-    rackValues.installation = racksProps.installation.filter(
-      (item) => item.type === rackValues.installation
-    )[0].name;
-    rackValues.delivery = racksProps.delivery.filter(
-      (item) => item.type === rackValues.delivery
-    )[0].name;
-    rackValues.subDelivery = racksProps.subDelivery.filter(
-      (item) => item.type === rackValues.subDelivery
-    )[0].name;
-
-    if (rackValues.delivery === "самовывоз") {
-      rackValues.subDelivery = "";
-    }
-
-    const data = { ...orderState, ...rackValues };
+    const data = { ...orderState, ...rackNames };
 
     sendMail(data).then((response) => {
       if (response.result === "success") {

@@ -7,13 +7,7 @@ const getCostByQntRange = (ranges, rangePropName, qnt) =>
     return qnt > min && qnt < max;
   })[0].value * qnt;
 
-export const getNameFromPropTypeValue = (rackValues, racksProps, typeValue) => {
-  rackValues[typeValue] = racksProps[typeValue].filter(
-    (item) => item.type === rackValues[typeValue]
-  )[0].name;
-};
-
-export const getValuesFromRackState = ({
+const getValuesFromRackState = ({
   shelf: {
     depth: { value: depth },
     width: { value: width },
@@ -25,9 +19,42 @@ export const getValuesFromRackState = ({
   ...rest
 }) => ({ depth, width, height, load, ...rest });
 
-export const getProductPropValues = (productPropValues, prop) => [
+export const getNameFromPropTypeValue = (racksProps, propName, typeValue) =>
+  racksProps[propName].filter((item) => item.type === typeValue)[0].name;
+
+export const getNamesFromRackState = (
+  { installation, delivery, subDelivery, ...rest },
+  racksProps
+) => {
+  const rackNames = getValuesFromRackState({ ...rest });
+
+  installation = getNameFromPropTypeValue(
+    racksProps,
+    "installation",
+    installation
+  );
+  delivery = getNameFromPropTypeValue(racksProps, "delivery", delivery);
+  subDelivery = getNameFromPropTypeValue(
+    racksProps,
+    "subDelivery",
+    subDelivery
+  );
+
+  if (delivery === "самовывоз") {
+    subDelivery = "";
+  }
+
+  return {
+    installation,
+    delivery,
+    subDelivery,
+    ...rackNames,
+  };
+};
+
+export const getProductPropValues = (racksProps, prop) => [
   ...new Set(
-    productPropValues.map((item) =>
+    racksProps.map((item) =>
       item.name ? { title: item.name, value: item[prop] } : item[prop]
     )
   ),
