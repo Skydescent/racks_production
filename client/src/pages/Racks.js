@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import InputsField from "../components/InputsField";
 import QuantitySlider from "../components/QuantitySlider";
 import Total from "../components/Total";
+import TextAboutProduct from "../components/TextAboutProduct";
+import IMG from "../images/racks-main.jpg";
 
 import {
   getProductPropValues,
@@ -13,6 +15,12 @@ import {
 import { sendMail } from "../services/MailService";
 
 import { racksProps, initialRack } from "../products/racks";
+import { installation } from "../products/installation";
+import { delivery, subDelivery } from "../products/delivery";
+
+racksProps.installation = installation;
+racksProps.delivery = delivery;
+racksProps.subDelivery = subDelivery;
 
 const Racks = () => {
   const [rackState, setRackState] = useState(initialRack);
@@ -146,7 +154,9 @@ const Racks = () => {
     <div>
       <section className="calc-bg">
         <div className="calc">
-          <div>Изображение</div>
+          <div>
+            <img src={IMG} alt="main_img" />
+          </div>
           <div>
             {renderInputsField("rack", "height", "Высота стеллажа, см")}
             {renderInputsField("shelf", "depth", "Глубина полки см")}
@@ -186,7 +196,7 @@ const Racks = () => {
           </div>
         </div>
       </section>
-      <section>Второй блок</section>
+      <TextAboutProduct />
     </div>
   );
 };
