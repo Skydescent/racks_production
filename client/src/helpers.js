@@ -18,7 +18,7 @@ const getValuesFromRackState = ({
     depth: { value: depth },
     width: { value: width },
   },
-  rack: {
+  bar: {
     height: { value: height },
     load: { value: load },
   },
@@ -110,7 +110,6 @@ export const getActiveInputs = (
   changedPropValue,
   except
 ) => {
-  console.log(productStateGroup);
   const activeInputsArr = Object.keys(productStateGroup)
     .filter(
       (relatedPropName) =>
@@ -156,55 +155,62 @@ export const syncActiveInputs = (
   return productState;
 };
 
-export const calculateTotalPrice = (rackState, productProps) => {
-  const {
-    depth,
-    width,
-    height,
-    load,
-    shelvesQuantity,
-    racksQuantity,
-    installation,
-    delivery,
-    subDelivery,
-  } = getValuesFromRackState(rackState);
+const isItemsEqual = (stateItem, propsItem) =>
+  Object.keys(stateItem).every(
+    (propName) =>
+      stateItem[propName].value === propsItem[propName] ||
+      stateItem[propName] === propsItem[propName]
+  );
 
-  const [{ price: shelfPrice }] = productProps.shelf.filter((item) => {
-    if (item.depth === depth && item.width === width) {
-      return true;
-    }
-    return false;
-  });
+const getPrice = (productsPropsGroup, stateItem) =>
+  productsPropsGroup.filter((propsItem) =>
+    isItemsEqual(stateItem, propsItem)
+  )[0].price;
 
-  const [{ price: rackPrice }] = productProps.rack.filter((item) => {
-    if (item.height === height && item.load === load) {
-      return true;
-    }
-    return false;
-  });
+const getItemPrice = (
+  productProps,
+  productState,
+  except = ["installation", "delivery", "subDelivery", "total"]
+) => {
+  let total = 0;
 
-  const installCost = productProps.installation
+  Object.keys(productState)
+    .filter((propName) => !except.includes(propName))
+    .forEach((propName) => {
+      if (!propName.includes("Qnt")) {
+        total +=
+          productState[propName + "Qnt"] *
+          getPrice(productProps[propName], productState[propName]);
+      }
+    });
+
+  return total;
+};
+
+const getDeliveryCost = (
+  { delivery: deliveryProp, subDelivery: subDeliveryProp },
+  { delivery, subDelivery }
+) =>
+  delivery !== "self_delivery"
+    ? deliveryProp.filter((item) => item.type === delivery)[0].price +
+      subDeliveryProp.filter((item) => item.type === subDelivery)[0].price
+    : 0;
+
+const getInstallationCost = (
+  { installation: propsInstall },
+  { installation, shelfQnt }
+) =>
+  propsInstall
     .filter((item) => installation.includes(item.type))
     .map((item) =>
       item.price.length
-        ? getCostByQntRange(item.price, "shelvesQuantity", shelvesQuantity)
+        ? getCostByQntRange(item.price, "shelfQnt", shelfQnt)
         : item.price
     )
     .reduce((accum, current) => accum + current);
 
-  let deliveryCost = 0;
-  if (delivery !== "self_delivery") {
-    deliveryCost += productProps.delivery.filter(
-      (item) => item.type === delivery
-    )[0].price;
-    deliveryCost += productProps.subDelivery.filter(
-      (item) => item.type === subDelivery
-    )[0].price;
-  }
-
-  return (
-    (shelvesQuantity * shelfPrice + rackPrice * 4 + installCost) *
-      racksQuantity +
-    deliveryCost
-  );
-};
+export const calculateTotalPrice = (rackState, productProps) =>
+  (getItemPrice(productProps, rackState) +
+    getInstallationCost(productProps, rackState)) *
+    rackState.itemsQnt +
+  getDeliveryCost(productProps, rackState);

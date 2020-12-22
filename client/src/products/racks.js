@@ -23,7 +23,7 @@ export const racksProps = {
     { depth: 80, width: 70, price: 840 },
     { depth: 80, width: 100, price: 815 },
   ],
-  rack: [
+  bar: [
     { height: 50, load: 750, price: 170 },
     { height: 100, load: 500, price: 200 },
     { height: 100, load: 750, price: 220 },
@@ -60,7 +60,7 @@ export const initialRack = {
       active: [70, 100, 120, 150],
     },
   },
-  rack: {
+  bar: {
     height: {
       value: 100,
       active: [50, 100, 120, 150, 180, 200, 220, 230, 240, 250, 300],
@@ -70,8 +70,9 @@ export const initialRack = {
       active: [500, 750],
     },
   },
-  shelvesQuantity: 4,
-  racksQuantity: 1,
+  shelfQnt: 4,
+  barQnt: 4,
+  itemsQnt: 1,
   installation: "self_install",
   delivery: "self_delivery",
   subDelivery: "to_flat",

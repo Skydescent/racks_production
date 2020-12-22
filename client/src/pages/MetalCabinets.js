@@ -6,18 +6,18 @@ const MetalCabinets = () => {
   const metalCabinetsProps = metalCabinets[0];
   const initialMetalCabinet = metalCabinetsProps.initialState;
   const fieldsSet = [
-    { title: "Высота шкафа, см", propName: "height", propGroup: "versions" },
-    { title: "Глубина, см", propName: "depth", propGroup: "versions" },
-    { title: "Ширина, см", propName: "width", propGroup: "versions" },
+    { title: "Высота шкафа, см", propName: "height", propGroup: "items" },
+    { title: "Глубина, см", propName: "depth", propGroup: "items" },
+    { title: "Ширина, см", propName: "width", propGroup: "items" },
     {
       title: "Количество секций",
       propName: "sectionsQnt",
-      propGroup: "versions",
+      propGroup: "items",
     },
     {
       title: "Количество полок",
       propName: "shelvesQnt",
-      propGroup: "versions",
+      propGroup: "items",
     },
   ];
 
@@ -31,13 +31,8 @@ const MetalCabinets = () => {
             fieldsSet={fieldsSet}
             productsProps={metalCabinetsProps}
             initialProduct={initialMetalCabinet}
-            propsGroups={["versions"]}
+            propsGroups={["items"]}
           />
-
-          <strong>Количество секций</strong>
-
-          <strong>Количество полок</strong>
-
           <strong>Комплектация</strong>
           <p>2 перекладины, 4 крючка, 2 врезных замка</p>
 

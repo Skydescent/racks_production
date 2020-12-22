@@ -157,10 +157,10 @@ const Racks = () => {
             <img src={IMG} alt="main_img" />
           </div>
           <div>
-            {renderInputsField("rack", "height", "Высота стеллажа, см")}
+            {renderInputsField("bar", "height", "Высота стеллажа, см")}
             {renderInputsField("shelf", "depth", "Глубина полки см")}
             {renderInputsField("shelf", "width", "Ширина полки, см")}
-            {renderInputsField("rack", "load", "Нагрузка на стеллаж, кг")}
+            {renderInputsField("bar", "load", "Нагрузка на стеллаж, кг")}
             <div className="flex grid_2 range">
               {renderQuantitySliderMove(
                 "Количество полок",
@@ -168,7 +168,7 @@ const Racks = () => {
                 10,
                 1,
                 "shelf",
-                "shelvesQuantity"
+                "shelfQnt"
               )}
               {renderQuantitySliderMove(
                 "Количество стеллажей",
@@ -176,7 +176,7 @@ const Racks = () => {
                 10,
                 1,
                 "rack",
-                "racksQuantity"
+                "itemsQnt"
               )}
             </div>
             <div className="total">

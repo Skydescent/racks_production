@@ -19,8 +19,8 @@ app.post("/api/send", (req, res) => {
         <li>Глубина полки, см: ${req.body.depth}</li>
         <li>Ширина полки, см: ${req.body.width}</li>
         <li>Нагрузка на стеллаж, кг: ${req.body.load}</li>
-        <li>Количество полок: ${req.body.shelvesQuantity}</li>
-        <li>Количество стеллажей: ${req.body.racksQuantity}</li>
+        <li>Количество полок: ${req.body.shelfQnt}</li>
+        <li>Количество стеллажей: ${req.body.itemsQnt}</li>
         <li>Комментарий к заказу: ${req.body.comment}</li>
         <li>Доставка: ${req.body.delivery + " " + req.body.subDelivery}</li>
         <li>Сборка: ${req.body.installation}</li>
@@ -34,8 +34,8 @@ app.post("/api/send", (req, res) => {
     port: 465,
     secure: true, // true for 465, false for other ports
     auth: {
-      user: "krl@skydescent.su", // generated ethereal user
-      pass: "zVe44N@ULG7NyCT", // generated ethereal password
+      user: "skydescent@skydescent.su", // generated ethereal user
+      pass: "Dp30A&TY", // generated ethereal password
     },
     tls: {
       rejectUnauthorized: false,
@@ -44,7 +44,7 @@ app.post("/api/send", (req, res) => {
 
   // setup email data with unicode symbols
   let mailOptions = {
-    from: '"Новый заказ" <krl@skydescent.su>', // sender address
+    from: '"Новый заказ" <skydescent@skydescent.su>', // sender address
     to: "kirill310587@mail.ru", // list of receivers
     subject: "Новый заказ на стеллаж", // Subject line
     text: "", // plain text body

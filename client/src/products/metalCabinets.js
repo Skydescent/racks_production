@@ -1,7 +1,7 @@
 export const metalCabinets = [
   {
     name: "Шкаф металлический для одежды ШРМ-АК",
-    versions: [
+    items: [
       {
         depth: 500,
         width: 500,
@@ -36,13 +36,14 @@ export const metalCabinets = [
       },
     ],
     initialState: {
-      versions: {
+      items: {
         depth: { value: 500, active: [500] },
         width: { value: 500, active: [500, 600, 800] },
         height: { value: 1860, active: [1860] },
         sectionsQnt: { value: 2, active: [1, 2] },
         shelvesQnt: { value: 2, active: [2, 3] },
       },
+      versionsQnt: 1,
       installation: "self_install",
       delivery: "self_delivery",
       subDelivery: "to_flat",
@@ -109,7 +110,6 @@ export const metalCabinets = [
         sectionsQnt: 1,
         shelvesQnt: 1,
       },
-      rack: { height: 1860 },
       installation: "self_install",
       delivery: "self_delivery",
       subDelivery: "to_flat",

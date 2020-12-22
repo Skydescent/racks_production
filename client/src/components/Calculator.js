@@ -1,10 +1,13 @@
 import React, { useState } from "react";
 import InputsField from "./InputsField";
+import QuantitySlider from "./QuantitySlider";
+import Total from "./Total";
 
 import { getAllProductPropsValues, syncActiveInputs } from "../helpers";
 
 const Calculator = ({
   fieldsSet,
+  slidersSet,
   productsProps,
   initialProduct,
   propsGroups = [],
@@ -43,20 +46,24 @@ const Calculator = ({
 
   return (
     <div>
-      {fieldsSet.map((field) => (
-        <InputsField
-          key={field.propGroup + "_" + field.propName}
-          title={field.title}
-          propGroup={field.propGroup}
-          propName={field.propName}
-          propValues={propValues[field.propGroup][field.propName]}
-          activeInputs={productState[field.propGroup][field.propName].active}
-          currentValue={productState[field.propGroup][field.propName].value}
-          handleInputChange={handleInputChange}
-        />
-      ))}
-      <div className="flex grid_2 range">Sliders</div>
-      <div className="total">Total</div>
+      {fieldsSet
+        ? fieldsSet.map((field) => (
+            <InputsField
+              key={field.propGroup + "_" + field.propName}
+              title={field.title}
+              propGroup={field.propGroup}
+              propName={field.propName}
+              propValues={propValues[field.propGroup][field.propName]}
+              activeInputs={
+                productState[field.propGroup][field.propName].active
+              }
+              currentValue={productState[field.propGroup][field.propName].value}
+              handleInputChange={handleInputChange}
+            />
+          ))
+        : ""}
+      {slidersSet ? slidersSet.map((slider) => <QuantitySlider />) : ""}
+      <div>Total</div>
     </div>
   );
 };
