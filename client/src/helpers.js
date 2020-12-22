@@ -62,12 +62,11 @@ export const getProductPropValues = (racksProps, prop) => [
 
 export const createActiveInputs = (
   productProps,
-  group,
   changedPropName,
   changedPropValue,
   propName
 ) =>
-  productProps[group]
+  productProps
     .filter((props) => {
       if (props[changedPropName] !== changedPropValue) {
         return false;

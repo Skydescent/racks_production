@@ -37,11 +37,11 @@ export const metalCabinets = [
     ],
     initialState: {
       version: {
-        depth: 500,
-        width: 500,
-        height: 1860,
-        sectionsQnt: 2,
-        shelvesQnt: 2,
+        depth: { value: 500, active: [500] },
+        width: { value: 500, active: [500, 600, 800] },
+        height: { value: 1860, active: [1860] },
+        sectionsQnt: { value: 2, active: [1, 2] },
+        shelvesQnt: { value: 2, active: [2, 3] },
       },
       installation: "self_install",
       delivery: "self_delivery",

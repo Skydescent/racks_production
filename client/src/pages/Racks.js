@@ -42,8 +42,7 @@ const Racks = () => {
         )[0];
 
         const newActiveInputs = createActiveInputs(
-          racksProps,
-          propGroup,
+          racksProps[propGroup],
           propName,
           value,
           relatedProp
