@@ -5,6 +5,7 @@ import "./styles/styles.css";
 import "./styles/media.css";
 
 import Racks from "./pages/Racks";
+import MetalCabinets from "./pages/MetalCabinets";
 
 function App() {
   return (
@@ -18,7 +19,7 @@ function App() {
           <div>Гардеробные системы</div>
         </Route>
         <Route exact path="/shkafy_metallicheskiye">
-          <div>Шкафы металлические</div>
+          <MetalCabinets />
         </Route>
         <Route exact path="/gruzovyye">
           <div>Грузовые стиллажи</div>

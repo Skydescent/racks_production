@@ -1,7 +1,7 @@
 export const metalCabinets = [
   {
     name: "Шкаф металлический для одежды ШРМ-АК",
-    version: [
+    versions: [
       {
         depth: 500,
         width: 500,
@@ -36,7 +36,7 @@ export const metalCabinets = [
       },
     ],
     initialState: {
-      version: {
+      versions: {
         depth: { value: 500, active: [500] },
         width: { value: 500, active: [500, 600, 800] },
         height: { value: 1860, active: [1860] },

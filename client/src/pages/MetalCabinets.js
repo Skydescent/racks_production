@@ -1,25 +1,38 @@
 import React from "react";
-import Calculator from "../components/Calculator;";
+import Calculator from "../components/Calculator";
 import { metalCabinets } from "../products/metalCabinets";
-import { racksProps } from "../products/racks";
 
 const MetalCabinets = () => {
-  racksProps = metalCabinets[0].version;
+  const metalCabinetsProps = metalCabinets[0];
+  const initialMetalCabinet = metalCabinetsProps.initialState;
   const fieldsSet = [
-    { title: "Высота шкафа, см", propName: "height" },
-    { title: "Глубина, см", propName: "depth" },
-    { title: "Ширина, см", propName: "width" },
-    { title: "Количество секций", propName: "sectionsQnt" },
-    { title: "Количество полок", propName: "shelvesQnt" },
+    { title: "Высота шкафа, см", propName: "height", propGroup: "versions" },
+    { title: "Глубина, см", propName: "depth", propGroup: "versions" },
+    { title: "Ширина, см", propName: "width", propGroup: "versions" },
+    {
+      title: "Количество секций",
+      propName: "sectionsQnt",
+      propGroup: "versions",
+    },
+    {
+      title: "Количество полок",
+      propName: "shelvesQnt",
+      propGroup: "versions",
+    },
   ];
 
   return (
-    <section class="content-inner product">
+    <section className="content-inner product">
       <div id="mark1" className="product_calc">
         <div>Изображение</div>
         <div>
           <h1>Шкаф металлический для одежды ШРМ-АК</h1>
-          <Calculator fieldsSet={fieldsSet} racksProps={racksProps} />
+          <Calculator
+            fieldsSet={fieldsSet}
+            productsProps={metalCabinetsProps}
+            initialProduct={initialMetalCabinet}
+            propsGroups={["versions"]}
+          />
 
           <strong>Количество секций</strong>
 

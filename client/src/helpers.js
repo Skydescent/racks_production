@@ -1,3 +1,9 @@
+const getUniqueValuesArr = (arr) => [...new Set(arr)];
+
+const currentActiveValue = (currentValue, active) => {
+  return active.includes(currentValue) ? currentValue : active[0];
+};
+
 const getCostByQntRange = (ranges, rangePropName, qnt) =>
   ranges.filter((item) => {
     if (item[rangePropName] === "all") {
@@ -52,28 +58,103 @@ export const getNamesFromRackState = (
   };
 };
 
-export const getProductPropValues = (racksProps, prop) => [
-  ...new Set(
-    racksProps.map((item) =>
+export const getProductPropValues = (productsProps, prop) =>
+  getUniqueValuesArr(
+    productsProps.map((item) =>
       item.name ? { title: item.name, value: item[prop] } : item[prop]
     )
-  ),
-];
+  );
+
+const getGroupPropsValues = (propsGroup, except) =>
+  Object.fromEntries(
+    Object.keys(propsGroup[0])
+      .filter((propName) => !except.includes(propName))
+      .map((propName) => [propName, getProductPropValues(propsGroup, propName)])
+  );
+
+export const getAllProductPropsValues = (
+  productsProps,
+  propsGroupsNames = [],
+  except = ["price"]
+) =>
+  propsGroupsNames.length === 0
+    ? getGroupPropsValues(productsProps, except)
+    : Object.fromEntries(
+        propsGroupsNames.map((groupName) => [
+          groupName,
+          getGroupPropsValues(productsProps[groupName], except),
+        ])
+      );
 
 export const createActiveInputs = (
-  productProps,
+  propsGroup,
   changedPropName,
   changedPropValue,
-  propName
+  relatedPropName
 ) =>
-  productProps
-    .filter((props) => {
-      if (props[changedPropName] !== changedPropValue) {
-        return false;
-      }
-      return true;
-    })
-    .map((props) => props[propName]);
+  getUniqueValuesArr(
+    propsGroup
+      .filter((props) => {
+        if (props[changedPropName] !== changedPropValue) {
+          return false;
+        }
+        return true;
+      })
+      .map((props) => props[relatedPropName])
+  );
+
+export const getActiveInputs = (
+  productsPropsGroup,
+  productStateGroup,
+  changedPropName,
+  changedPropValue,
+  except
+) => {
+  console.log(productStateGroup);
+  const activeInputsArr = Object.keys(productStateGroup)
+    .filter(
+      (relatedPropName) =>
+        relatedPropName !== changedPropName && !except.includes(relatedPropName)
+    )
+    .map((propName) => [
+      propName,
+      createActiveInputs(
+        productsPropsGroup,
+        changedPropName,
+        changedPropValue,
+        propName
+      ),
+    ]);
+
+  return Object.fromEntries(activeInputsArr);
+};
+
+export const syncActiveInputs = (
+  productsProps,
+  productState,
+  propsGroupName,
+  changedPropName,
+  changedPropValue,
+  except
+) => {
+  const activeInputs = getActiveInputs(
+    productsProps[propsGroupName],
+    productState[propsGroupName],
+    changedPropName,
+    changedPropValue,
+    except
+  );
+
+  Object.keys(activeInputs).forEach((propName) => {
+    productState[propsGroupName][propName].active = activeInputs[propName];
+    productState[propsGroupName][propName].value = currentActiveValue(
+      productState[propsGroupName][propName].value,
+      activeInputs[propName]
+    );
+  });
+
+  return productState;
+};
 
 export const calculateTotalPrice = (rackState, productProps) => {
   const {
