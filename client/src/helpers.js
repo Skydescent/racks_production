@@ -1,5 +1,11 @@
 const getUniqueValuesArr = (arr) => [...new Set(arr)];
 
+const getPropValueByTitle = (productState, title) => {
+  const propsNames = title.split("_");
+  const prop = propsNames.reduce((acc, curr) => acc[curr] ?? acc, productState);
+  return prop.value ?? prop;
+};
+
 const currentActiveValue = (currentValue, active) => {
   return active.includes(currentValue) ? currentValue : active[0];
 };
@@ -13,50 +19,57 @@ const getCostByQntRange = (ranges, rangePropName, qnt) =>
     return qnt > min && qnt < max;
   })[0].value * qnt;
 
-const getValuesFromRackState = ({
-  shelf: {
-    depth: { value: depth },
-    width: { value: width },
-  },
-  bar: {
-    height: { value: height },
-    load: { value: load },
-  },
-  ...rest
-}) => ({ depth, width, height, load, ...rest });
+export const getProductPropsToOrder = (productState, productsProps) =>
+  productsProps.titles.map((item) => ({
+    title: item.title,
+    value: getPropValueByTitle(productState, item.title),
+  }));
+// Получить массив объектов [{title, value}];
 
-export const getNameFromPropTypeValue = (racksProps, propName, typeValue) =>
-  racksProps[propName].filter((item) => item.type === typeValue)[0].name;
+// const getValuesFromRackState = ({
+//   shelf: {
+//     depth: { value: depth },
+//     width: { value: width },
+//   },
+//   bar: {
+//     height: { value: height },
+//     load: { value: load },
+//   },
+//   ...rest
+// }) => ({ depth, width, height, load, ...rest });
 
-export const getNamesFromRackState = (
-  { installation, delivery, subDelivery, ...rest },
-  racksProps
-) => {
-  const rackNames = getValuesFromRackState({ ...rest });
+// export const getNameFromPropTypeValue = (racksProps, propName, typeValue) =>
+//   racksProps[propName].filter((item) => item.type === typeValue)[0].name;
 
-  installation = getNameFromPropTypeValue(
-    racksProps,
-    "installation",
-    installation
-  );
-  delivery = getNameFromPropTypeValue(racksProps, "delivery", delivery);
-  subDelivery = getNameFromPropTypeValue(
-    racksProps,
-    "subDelivery",
-    subDelivery
-  );
+// export const getNamesFromRackState = (
+//   { installation, delivery, subDelivery, ...rest },
+//   racksProps
+// ) => {
+//   const rackNames = getValuesFromRackState({ ...rest });
 
-  if (delivery === "самовывоз") {
-    subDelivery = "";
-  }
+//   installation = getNameFromPropTypeValue(
+//     racksProps,
+//     "installation",
+//     installation
+//   );
+//   delivery = getNameFromPropTypeValue(racksProps, "delivery", delivery);
+//   subDelivery = getNameFromPropTypeValue(
+//     racksProps,
+//     "subDelivery",
+//     subDelivery
+//   );
 
-  return {
-    installation,
-    delivery,
-    subDelivery,
-    ...rackNames,
-  };
-};
+//   if (delivery === "самовывоз") {
+//     subDelivery = "";
+//   }
+
+//   return {
+//     installation,
+//     delivery,
+//     subDelivery,
+//     ...rackNames,
+//   };
+// };
 
 export const getProductPropValues = (productsProps, prop) =>
   getUniqueValuesArr(
@@ -187,20 +200,17 @@ const getItemPrice = (
   return total;
 };
 
-const getDeliveryCost = (
-  { delivery: deliveryProp, subDelivery: subDeliveryProp },
-  { delivery, subDelivery }
-) =>
-  delivery !== "self_delivery"
-    ? deliveryProp.filter((item) => item.type === delivery)[0].price +
-      subDeliveryProp.filter((item) => item.type === subDelivery)[0].price
-    : 0;
+const getDeliveryCost = ({ delivery: { types } }, { delivery }) =>
+  types.reduce(
+    (acc, curr) => (delivery.includes(curr.type) ? acc + curr.price : acc),
+    0
+  );
 
 const getInstallationCost = (
-  { installation: propsInstall },
+  { installation: { types } },
   { installation, shelfQnt }
 ) =>
-  propsInstall
+  types
     .filter((item) => installation.includes(item.type))
     .map((item) =>
       item.price.length
@@ -209,8 +219,8 @@ const getInstallationCost = (
     )
     .reduce((accum, current) => accum + current);
 
-export const calculateTotalPrice = (rackState, productProps) =>
-  (getItemPrice(productProps, rackState) +
-    getInstallationCost(productProps, rackState)) *
-    rackState.itemsQnt +
-  getDeliveryCost(productProps, rackState);
+export const calculateTotalPrice = (productState, productProps) =>
+  (getItemPrice(productProps, productState) +
+    getInstallationCost(productProps, productState)) *
+    productState.itemsQnt +
+  getDeliveryCost(productProps, productState);

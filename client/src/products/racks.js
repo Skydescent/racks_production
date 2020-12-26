@@ -1,4 +1,13 @@
 export const racksProps = {
+  titles: {
+    shelf_depth: "Глубина полки см",
+    shelf_width: "Ширина полки, см",
+    bar_height: "Высота стеллажа, см",
+    bar_load: "Нагрузка на стеллаж, кг",
+    shelfQnt: "Количество полок",
+    barQnt: "Количество стоек",
+    itemsQnt: "Количество стеллажей",
+  },
   shelf: [
     { depth: 30, width: 70, price: 285 },
     { depth: 30, width: 100, price: 370 },
@@ -74,7 +83,6 @@ export const initialRack = {
   barQnt: 4,
   itemsQnt: 1,
   installation: "self_install",
-  delivery: "self_delivery",
-  subDelivery: "to_flat",
+  delivery: ["self_delivery"],
   total: 2720,
 };

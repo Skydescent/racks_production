@@ -1,153 +1,27 @@
-import React, { useState } from "react";
-import InputsField from "../components/InputsField";
-import QuantitySlider from "../components/QuantitySlider";
-import Total from "../components/Total";
+import React from "react";
 import TextAboutProduct from "../components/TextAboutProduct";
+import Calculator from "../components/calculator/Calculator";
+
 import IMG from "../images/racks-main.jpg";
 
-import {
-  getProductPropValues,
-  createActiveInputs,
-  calculateTotalPrice,
-  getNamesFromRackState,
-} from "../helpers";
-
-import { sendMail } from "../services/MailService";
-
 import { racksProps, initialRack } from "../products/racks";
-import { installation } from "../products/installation";
-import { delivery, subDelivery } from "../products/delivery";
-
-racksProps.installation = installation;
-racksProps.delivery = delivery;
-racksProps.subDelivery = subDelivery;
 
 const Racks = () => {
-  const [rackState, setRackState] = useState(initialRack);
-  const [orderState, setOrder] = useState({
-    phone: null,
-    email: null,
-    comment: null,
-    isOrderSend: false,
-  });
+  const fieldsSet = [
+    { title: "Высота стеллажа, см", propName: "height", propGroup: "bar" },
+    { title: "Глубина полки см", propName: "depth", propGroup: "shelf" },
+    { title: "Ширина полки, см", propName: "width", propGroup: "shelf" },
+    {
+      title: "Нагрузка на стеллаж, кг",
+      propName: "load",
+      propGroup: "bar",
+    },
+  ];
 
-  const handleInputChange = (propGroup, propName, value) => {
-    setRackState((prev) => {
-      const newRack = { ...prev };
-      if (["installation", "delivery", "subDelivery"].includes(propGroup)) {
-        newRack[propGroup] = value;
-      } else {
-        const relatedProp = Object.keys(prev[propGroup]).filter(
-          (relatedPropName) => relatedPropName !== propName
-        )[0];
-
-        const newActiveInputs = createActiveInputs(
-          racksProps[propGroup],
-          propName,
-          value,
-          relatedProp
-        );
-
-        newRack[propGroup][propName].value = value;
-        newRack[propGroup][relatedProp].active = newActiveInputs;
-      }
-      newRack.total = calculateTotalPrice(newRack, racksProps);
-      return newRack;
-    });
-  };
-
-  const handleQuantitySliderMove = (propGroup, value) => {
-    setRackState((prev) => {
-      const newRack = { ...prev };
-      newRack[propGroup] = value;
-      newRack.total = calculateTotalPrice(newRack, racksProps);
-      return newRack;
-    });
-  };
-
-  const handleSendOrderMail = (e) => {
-    e.preventDefault();
-
-    // Валидация полей формы заказа
-    if (!orderState.phone && !orderState.email) {
-      alert("Поля телефон и/или почта должны быть заполнены!");
-      return;
-    }
-    const rackNames = getNamesFromRackState(rackState, racksProps);
-
-    const data = { ...orderState, ...rackNames };
-
-    sendMail(data).then((response) => {
-      if (response.result === "success") {
-        setOrder(() => ({
-          email: null,
-          phone: null,
-          comment: null,
-          isOrderSend: true,
-        }));
-        setTimeout(() => {
-          setOrder(() => ({
-            email: null,
-            phone: null,
-            comment: null,
-            isOrderSend: false,
-          }));
-        }, 3000);
-      }
-    });
-  };
-
-  const handleFormChange = (e) => {
-    setOrder((prev) => {
-      const newOrder = { ...prev };
-      newOrder[e.target.name] = e.target.value;
-      return newOrder;
-    });
-  };
-
-  const renderInputsField = (propGroup, propName, title) => {
-    const propValues = getProductPropValues(racksProps[propGroup], propName);
-
-    let activeInputs = null;
-    let currentValue = rackState[propGroup];
-
-    if (
-      rackState[propGroup][propName] &&
-      rackState[propGroup][propName].value &&
-      rackState[propGroup][propName].active
-    ) {
-      currentValue = rackState[propGroup][propName].value;
-      activeInputs = rackState[propGroup][propName].active;
-    }
-
-    return (
-      <InputsField
-        title={title}
-        propGroup={propGroup}
-        propName={propName}
-        propValues={propValues}
-        activeInputs={activeInputs}
-        currentValue={currentValue}
-        handleInputChange={handleInputChange}
-      />
-    );
-  };
-
-  const renderQuantitySliderMove = (title, min, max, step, name, propGroup) => {
-    const currentValue = rackState[propGroup];
-    return (
-      <QuantitySlider
-        title={title}
-        min={min}
-        max={max}
-        step={step}
-        name={name}
-        handleQuantitySliderMove={handleQuantitySliderMove}
-        propGroup={propGroup}
-        currentValue={currentValue}
-      />
-    );
-  };
+  const slidersSet = [
+    { title: "Количество полок", propName: "shelfQnt", range: "2:10" },
+    { title: "Количество стеллажей", propName: "itemsQnt", range: "1:10" },
+  ];
 
   return (
     <div>
@@ -156,43 +30,13 @@ const Racks = () => {
           <div>
             <img src={IMG} alt="main_img" />
           </div>
-          <div>
-            {renderInputsField("bar", "height", "Высота стеллажа, см")}
-            {renderInputsField("shelf", "depth", "Глубина полки см")}
-            {renderInputsField("shelf", "width", "Ширина полки, см")}
-            {renderInputsField("bar", "load", "Нагрузка на стеллаж, кг")}
-            <div className="flex grid_2 range">
-              {renderQuantitySliderMove(
-                "Количество полок",
-                2,
-                10,
-                1,
-                "shelf",
-                "shelfQnt"
-              )}
-              {renderQuantitySliderMove(
-                "Количество стеллажей",
-                1,
-                10,
-                1,
-                "rack",
-                "itemsQnt"
-              )}
-            </div>
-            <div className="total">
-              <Total
-                total={rackState.total}
-                deliveryType={rackState.delivery}
-                handleSendOrderMail={handleSendOrderMail}
-                handleFormChange={handleFormChange}
-                isOrderSend={orderState.isOrderSend}
-              />
-              {renderInputsField("delivery", "type", "Доставка")}
-              {rackState.delivery === "self_delivery" ||
-                renderInputsField("subDelivery", "type", "")}
-              {renderInputsField("installation", "type", "Сборка")}
-            </div>
-          </div>
+          <Calculator
+            fieldsSet={fieldsSet}
+            slidersSet={slidersSet}
+            productsProps={racksProps}
+            initialProduct={initialRack}
+            propsGroups={["shelf", "bar"]}
+          />
         </div>
       </section>
       <TextAboutProduct />

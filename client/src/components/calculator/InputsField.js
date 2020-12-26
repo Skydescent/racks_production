@@ -1,5 +1,5 @@
-import React from 'react';
-import CalcRadioInput from './CalcRadioInput';
+import React from "react";
+import CalcRadioInput from "./CalcRadioInput";
 
 const InputsField = ({
   title,
@@ -11,9 +11,9 @@ const InputsField = ({
   handleInputChange,
 }) => (
   <div className="range">
-    {title === '' || <strong>{title}</strong>}
+    {title === "" || <strong>{title}</strong>}
 
-    {propValues.map(item => (
+    {propValues.map((item) => (
       <CalcRadioInput
         key={`${propName}_${item.title ?? item}`}
         title={item.title ?? item}
