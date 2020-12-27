@@ -19,57 +19,20 @@ const getCostByQntRange = (ranges, rangePropName, qnt) =>
     return qnt > min && qnt < max;
   })[0].value * qnt;
 
-export const getProductPropsToOrder = (productState, productsProps) =>
-  productsProps.titles.map((item) => ({
-    title: item.title,
-    value: getPropValueByTitle(productState, item.title),
+export const getProductPropsToOrder = (productState, productsProps) => {
+  return productsProps.titles.map((item) => ({
+    title: item[Object.keys(item)[0]],
+    value: getPropValueByTitle(productState, Object.keys(item)[0]),
   }));
-// Получить массив объектов [{title, value}];
+};
 
-// const getValuesFromRackState = ({
-//   shelf: {
-//     depth: { value: depth },
-//     width: { value: width },
-//   },
-//   bar: {
-//     height: { value: height },
-//     load: { value: load },
-//   },
-//   ...rest
-// }) => ({ depth, width, height, load, ...rest });
-
-// export const getNameFromPropTypeValue = (racksProps, propName, typeValue) =>
-//   racksProps[propName].filter((item) => item.type === typeValue)[0].name;
-
-// export const getNamesFromRackState = (
-//   { installation, delivery, subDelivery, ...rest },
-//   racksProps
-// ) => {
-//   const rackNames = getValuesFromRackState({ ...rest });
-
-//   installation = getNameFromPropTypeValue(
-//     racksProps,
-//     "installation",
-//     installation
-//   );
-//   delivery = getNameFromPropTypeValue(racksProps, "delivery", delivery);
-//   subDelivery = getNameFromPropTypeValue(
-//     racksProps,
-//     "subDelivery",
-//     subDelivery
-//   );
-
-//   if (delivery === "самовывоз") {
-//     subDelivery = "";
-//   }
-
-//   return {
-//     installation,
-//     delivery,
-//     subDelivery,
-//     ...rackNames,
-//   };
-// };
+export const getNameByType = (types, type) => {
+  types = types.filter(
+    (item) =>
+      item.type === type || (Array.isArray(type) && type.includes(item.type))
+  );
+  return types.reduce((acc, curr) => acc + " " + curr.name, "");
+};
 
 export const getProductPropValues = (productsProps, prop) =>
   getUniqueValuesArr(
@@ -200,16 +163,13 @@ const getItemPrice = (
   return total;
 };
 
-const getDeliveryCost = ({ delivery: { types } }, { delivery }) =>
+const getDeliveryCost = ({ types }, { delivery }) =>
   types.reduce(
     (acc, curr) => (delivery.includes(curr.type) ? acc + curr.price : acc),
     0
   );
 
-const getInstallationCost = (
-  { installation: { types } },
-  { installation, shelfQnt }
-) =>
+const getInstallationCost = ({ types }, { installation, shelfQnt }) =>
   types
     .filter((item) => installation.includes(item.type))
     .map((item) =>
@@ -219,8 +179,13 @@ const getInstallationCost = (
     )
     .reduce((accum, current) => accum + current);
 
-export const calculateTotalPrice = (productState, productProps) =>
+export const calculateTotalPrice = (
+  productState,
+  productProps,
+  delivery,
+  installation
+) =>
   (getItemPrice(productProps, productState) +
-    getInstallationCost(productProps, productState)) *
+    getInstallationCost(installation, productState)) *
     productState.itemsQnt +
-  getDeliveryCost(productProps, productState);
+  getDeliveryCost(delivery, productState);

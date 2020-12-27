@@ -10,48 +10,44 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "client/build")));
 
 app.post("/api/send", (req, res) => {
-  const output = `
-      <h3>Новый заказ:</h3>
-      <ul>  
-        <li>Телефон: ${req.body.phone}</li>
-        <li>Электронный адрес: ${req.body.email}</li>
-        <li>Высота стеллажа, см: ${req.body.height}</li>
-        <li>Глубина полки, см: ${req.body.depth}</li>
-        <li>Ширина полки, см: ${req.body.width}</li>
-        <li>Нагрузка на стеллаж, кг: ${req.body.load}</li>
-        <li>Количество полок: ${req.body.shelfQnt}</li>
-        <li>Количество стеллажей: ${req.body.itemsQnt}</li>
-        <li>Комментарий к заказу: ${req.body.comment}</li>
-        <li>Доставка: ${req.body.delivery + " " + req.body.subDelivery}</li>
-        <li>Сборка: ${req.body.installation}</li>
-        <li>Сумма: ${req.body.total}</li>
-      </ul>
-    `;
+  const output =
+    `
+  <h3>Новый заказ:</h3>
+  <ul>  
+    <li>Телефон: ${req.body.phone}</li>
+    <li>Электронный адрес: ${req.body.email}</li>` +
+    req.body.product.reduce(
+      (acc, cur) => acc + `<li>${cur.title}: ${cur.value} </li>`,
+      ""
+    ) +
+    `<li>Комментарий к заказу: ${req.body.comment}</li>` +
+    req.body.order.reduce(
+      (acc, cur) => acc + `<li>${cur.title}: ${cur.value} </li>`,
+      ""
+    );
+  console.log(output);
 
-  // create reusable transporter object using the default SMTP transport
   let transporter = nodemailer.createTransport({
     host: "smtp.beget.ru",
     port: 465,
-    secure: true, // true for 465, false for other ports
+    secure: true,
     auth: {
-      user: "skydescent@skydescent.su", // generated ethereal user
-      pass: "Dp30A&TY", // generated ethereal password
+      user: "skydescent@skydescent.su",
+      pass: "Dp30A&TY",
     },
     tls: {
       rejectUnauthorized: false,
     },
   });
 
-  // setup email data with unicode symbols
   let mailOptions = {
-    from: '"Новый заказ" <skydescent@skydescent.su>', // sender address
-    to: "kirill310587@mail.ru", // list of receivers
-    subject: "Новый заказ на стеллаж", // Subject line
-    text: "", // plain text body
-    html: output, // html body
+    from: '"Новый заказ" <skydescent@skydescent.su>',
+    to: "kirill310587@mail.ru",
+    subject: "Новый заказ на стеллаж",
+    text: "",
+    html: output,
   };
 
-  // send mail with defined transport object
   transporter.sendMail(mailOptions, (error, info) => {
     if (error) {
       return console.log(error);

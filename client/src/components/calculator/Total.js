@@ -1,5 +1,4 @@
 import React from "react";
-import Popup from "../Popup";
 
 const Total = ({ total, deliveryType, children, order }) => {
   const deliveryTitle = {

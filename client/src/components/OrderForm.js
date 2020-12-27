@@ -27,6 +27,7 @@ const OrderForm = ({ productPropsToOrder }) => {
     }
 
     const data = { ...orderState, ...productPropsToOrder };
+    console.log(data);
 
     sendMail(data).then((response) => {
       if (response.result === "success") {
@@ -48,7 +49,7 @@ const OrderForm = ({ productPropsToOrder }) => {
     });
   };
 
-  return (
+  return !orderState.isOrderSend ? (
     <form className="form ajax_form" name="order_form">
       <div className="popup_header">Отправка заказа</div>
 
@@ -83,6 +84,11 @@ const OrderForm = ({ productPropsToOrder }) => {
         onClick={(e) => handleSendOrderMail(e)}
       />
     </form>
+  ) : (
+    <div>
+      <strong>Заказ отправлен</strong>
+      <p>Ожидайте обратного звонка или письма из магазина.</p>
+    </div>
   );
 };
 

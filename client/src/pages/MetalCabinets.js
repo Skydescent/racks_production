@@ -35,8 +35,6 @@ const MetalCabinets = () => {
           />
           <strong>Комплектация</strong>
           <p>2 перекладины, 4 крючка, 2 врезных замка</p>
-
-          <div className="total">Total</div>
         </div>
       </div>
     </section>

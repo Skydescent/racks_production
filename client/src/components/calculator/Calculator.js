@@ -4,7 +4,7 @@ import QuantitySlider from "./QuantitySlider";
 import Total from "./Total";
 import Delivery from "./Delivery";
 import Installation from "./Installation";
-import Popup from "../Popup";
+import PopupOrder from "../PopupOrder";
 
 import { installation } from "../../products/installation";
 import { delivery } from "../../products/delivery";
@@ -14,6 +14,7 @@ import {
   syncActiveInputs,
   calculateTotalPrice,
   getProductPropsToOrder,
+  getNameByType,
 } from "../../helpers";
 
 const Calculator = ({
@@ -24,18 +25,25 @@ const Calculator = ({
   propsGroups = [],
   except = ["price"],
 }) => {
-  productsProps = { delivery, installation, ...productsProps };
-  productsProps.titles.push({ delivery: delivery.title });
-  productsProps.titles.push({ installation: installation.title });
-
   const [productState, setProductState] = useState(initialProduct);
 
-  const productPropsToOrder = getProductPropsToOrder(
-    productState,
-    productsProps
-  );
-
-  // getNamesFromRackState(productState, productsProps);
+  const productPropsToOrder = {
+    product: getProductPropsToOrder(productState, productsProps),
+    order: [
+      {
+        title: delivery.title,
+        value: getNameByType(delivery.types, productState.delivery),
+      },
+      {
+        title: installation.title,
+        value: getNameByType(installation.types, productState.installation),
+      },
+      {
+        title: "Сумма",
+        value: productState.total,
+      },
+    ],
+  };
 
   const propValues = getAllProductPropsValues(
     productsProps,
@@ -63,7 +71,9 @@ const Calculator = ({
       newProductState[propsGroupName][changedPropName].value = changedPropValue;
       newProductState.total = calculateTotalPrice(
         newProductState,
-        productsProps
+        productsProps,
+        delivery,
+        installation
       );
       return newProductState;
     });
@@ -75,7 +85,9 @@ const Calculator = ({
       newProductState[propName] = value;
       newProductState.total = calculateTotalPrice(
         newProductState,
-        productsProps
+        productsProps,
+        delivery,
+        installation
       );
       return newProductState;
     });
@@ -83,7 +95,6 @@ const Calculator = ({
 
   const handleDeliveryChange = (deliveryType) => {
     setProductState((prev) => {
-      console.log(productsProps);
       const newProductState = { ...prev };
       const parents = delivery.types.reduce((acc, curr) =>
         curr.parent ? new Set(curr.parent.concat(acc)) : acc
@@ -103,7 +114,9 @@ const Calculator = ({
       }
       newProductState.total = calculateTotalPrice(
         newProductState,
-        productsProps
+        productsProps,
+        delivery,
+        installation
       );
       return newProductState;
     });
@@ -115,7 +128,9 @@ const Calculator = ({
       newProductState.installation = installType;
       newProductState.total = calculateTotalPrice(
         newProductState,
-        productsProps
+        productsProps,
+        delivery,
+        installation
       );
       return newProductState;
     });
@@ -159,7 +174,7 @@ const Calculator = ({
       <Total
         total={productState.total}
         deliveryType={productState.delivery}
-        order={<Popup />}
+        order={<PopupOrder productPropsToOrder={productPropsToOrder} />}
       >
         <Delivery
           delivery={delivery}
