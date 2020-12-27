@@ -21,9 +21,11 @@ const Calculator = ({
   fieldsSet,
   slidersSet,
   productsProps,
+  productContent,
   initialProduct,
   propsGroups = [],
   except = ["price"],
+  isInstallation,
 }) => {
   const [productState, setProductState] = useState(initialProduct);
 
@@ -170,6 +172,7 @@ const Calculator = ({
             ))
           : ""}
       </div>
+      {productContent ?? ""}
 
       <Total
         total={productState.total}
@@ -181,11 +184,13 @@ const Calculator = ({
           productState={productState}
           handleDeliveryChange={handleDeliveryChange}
         />
-        <Installation
-          installation={installation}
-          productState={productState}
-          hadleInstallChange={hadleInstallChange}
-        />
+        {isInstallation && (
+          <Installation
+            installation={installation}
+            productState={productState}
+            hadleInstallChange={hadleInstallChange}
+          />
+        )}
       </Total>
     </div>
   );

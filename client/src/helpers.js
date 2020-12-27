@@ -41,19 +41,20 @@ export const getProductPropValues = (productsProps, prop) =>
     )
   );
 
-const getGroupPropsValues = (propsGroup, except) =>
-  Object.fromEntries(
+const getGroupPropsValues = (propsGroup, except) => {
+  return Object.fromEntries(
     Object.keys(propsGroup[0])
       .filter((propName) => !except.includes(propName))
       .map((propName) => [propName, getProductPropValues(propsGroup, propName)])
   );
+};
 
 export const getAllProductPropsValues = (
   productsProps,
   propsGroupsNames = [],
   except = ["price"]
-) =>
-  propsGroupsNames.length === 0
+) => {
+  return propsGroupsNames.length === 0
     ? getGroupPropsValues(productsProps, except)
     : Object.fromEntries(
         propsGroupsNames.map((groupName) => [
@@ -61,6 +62,7 @@ export const getAllProductPropsValues = (
           getGroupPropsValues(productsProps[groupName], except),
         ])
       );
+};
 
 export const createActiveInputs = (
   propsGroup,
@@ -138,10 +140,12 @@ const isItemsEqual = (stateItem, propsItem) =>
       stateItem[propName] === propsItem[propName]
   );
 
-const getPrice = (productsPropsGroup, stateItem) =>
-  productsPropsGroup.filter((propsItem) =>
+const getPrice = (productsPropsGroup, stateItem) => {
+  console.log(productsPropsGroup, stateItem);
+  return productsPropsGroup.filter((propsItem) =>
     isItemsEqual(stateItem, propsItem)
   )[0].price;
+};
 
 const getItemPrice = (
   productProps,
@@ -154,9 +158,8 @@ const getItemPrice = (
     .filter((propName) => !except.includes(propName))
     .forEach((propName) => {
       if (!propName.includes("Qnt")) {
-        total +=
-          productState[propName + "Qnt"] *
-          getPrice(productProps[propName], productState[propName]);
+        let qnt = productState[propName + "Qnt"] ?? 1;
+        total += qnt * getPrice(productProps[propName], productState[propName]);
       }
     });
 
