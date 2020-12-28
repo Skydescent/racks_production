@@ -196,12 +196,15 @@ export const metalCabinets = [
     ],
     initialState: {
       items: {
-        depth: { value: 500, active: [500] },
-        width: { value: 500, active: [500, 600, 800] },
-        height: { value: 1860, active: [1860] },
-        sections: { value: 2, active: [1, 2] },
-        shelves: { value: 2, active: [2, 3] },
-        set: "2 перекладины, 4 крючка, 2 верзных замка",
+        depth: { value: 500, active: "all" },
+        width: { value: 500, active: "all" },
+        height: { value: 1860, active: "all" },
+        sections: { value: 2, active: "all" },
+        shelves: { value: 2, active: "all" },
+        set: {
+          value: "2 перекладины, 4 крючка, 2 верзных замка",
+          active: "all",
+        },
       },
       itemsQnt: 1,
       installation: "self_install",

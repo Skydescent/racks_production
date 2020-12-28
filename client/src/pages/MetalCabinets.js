@@ -34,8 +34,9 @@ const MetalCabinets = () => {
             productsProps={metalCabinetsProps}
             initialProduct={initialMetalCabinet}
             propsGroups={["items"]}
-            productContent={"items_set"}
-            except={["price", "set"]}
+            stateContent={"items_set"}
+            except={["price"]}
+            isActiveInputs={false}
           />
         </div>
       </div>

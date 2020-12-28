@@ -24,7 +24,7 @@ const InputsField = ({
         }
         isChecked={currentValue === (item.value ?? item)}
         isActive={
-          activeInputs === null
+          activeInputs === "all"
             ? true
             : activeInputs.includes(item.value ?? item)
         }

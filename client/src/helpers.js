@@ -1,9 +1,49 @@
 const getUniqueValuesArr = (arr) => [...new Set(arr)];
 
-const getPropValueByTitle = (productState, title) => {
+export const getPropValueByTitle = (productState, title) => {
   const propsNames = title.split("_");
   const prop = propsNames.reduce((acc, curr) => acc[curr] ?? acc, productState);
   return prop.value ?? prop;
+};
+
+const rateStates = (propState, productState, changedPropName) =>
+  Object.keys(productState).reduce((rating, curName) => {
+    if (productState[curName].value === propState[curName]) {
+      if (curName === changedPropName) {
+        return rating + 10;
+      }
+      return rating + 1;
+    }
+    return rating;
+  }, 0);
+
+const getSimilarState = (productState, productsProps, changedPropName) => {
+  let maxSamePropsIndex = 0;
+  productsProps
+    .map((state) => rateStates(state, productState, changedPropName))
+    .reduce((prev, curr, index) => {
+      if (prev < curr) {
+        maxSamePropsIndex = index;
+        return curr;
+      }
+      return prev;
+    }, 0);
+  return productsProps[maxSamePropsIndex];
+};
+
+export const setCurrentStateToSimilar = (
+  productState,
+  productProps,
+  changedPropName
+) => {
+  const similarState = getSimilarState(
+    productState,
+    productProps,
+    changedPropName
+  );
+  Object.keys(productState).forEach((propName) => {
+    productState[propName].value = similarState[propName];
+  });
 };
 
 const currentActiveValue = (currentValue, active) => {
@@ -34,7 +74,7 @@ export const getNameByType = (types, type) => {
   return types.reduce((acc, curr) => acc + " " + curr.name, "");
 };
 
-export const getProductPropValues = (productsProps, prop) =>
+const getProductPropValues = (productsProps, prop) =>
   getUniqueValuesArr(
     productsProps.map((item) =>
       item.name ? { title: item.name, value: item[prop] } : item[prop]
@@ -106,6 +146,7 @@ export const getActiveInputs = (
   return Object.fromEntries(activeInputsArr);
 };
 
+// Максимально похожий объект
 export const syncActiveInputs = (
   productsProps,
   productState,
@@ -141,16 +182,16 @@ const isItemsEqual = (stateItem, propsItem) =>
   );
 
 const getPrice = (productsPropsGroup, stateItem) => {
-  console.log(productsPropsGroup, stateItem);
-  return productsPropsGroup.filter((propsItem) =>
+  let result = productsPropsGroup.filter((propsItem) =>
     isItemsEqual(stateItem, propsItem)
-  )[0].price;
+  );
+  return result[0].price;
 };
 
 const getItemPrice = (
   productProps,
   productState,
-  except = ["installation", "delivery", "subDelivery", "total"]
+  except = ["installation", "delivery", "subDelivery", "total", "set"]
 ) => {
   let total = 0;
 

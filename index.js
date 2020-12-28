@@ -25,7 +25,6 @@ app.post("/api/send", (req, res) => {
       (acc, cur) => acc + `<li>${cur.title}: ${cur.value} </li>`,
       ""
     );
-  console.log(output);
 
   let transporter = nodemailer.createTransport({
     host: "smtp.beget.ru",
@@ -42,7 +41,7 @@ app.post("/api/send", (req, res) => {
 
   let mailOptions = {
     from: '"Новый заказ" <skydescent@skydescent.su>',
-    to: "kirill310587@mail.ru",
+    to: "kirill310587@mail.ru, Stellage-tomsk@mail.ru",
     subject: "Новый заказ на стеллаж",
     text: "",
     html: output,

@@ -37,6 +37,7 @@ const Racks = () => {
             initialProduct={initialRack}
             propsGroups={["shelf", "bar"]}
             isInstallation={true}
+            isActiveInputs={true}
           />
         </div>
       </section>

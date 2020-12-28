@@ -15,20 +15,22 @@ import {
   calculateTotalPrice,
   getProductPropsToOrder,
   getNameByType,
+  setCurrentStateToSimilar,
+  getPropValueByTitle,
 } from "../../helpers";
 
 const Calculator = ({
   fieldsSet,
   slidersSet,
   productsProps,
-  productContent,
+  stateContent,
   initialProduct,
   propsGroups = [],
   except = ["price"],
   isInstallation,
+  isActiveInputs,
 }) => {
   const [productState, setProductState] = useState(initialProduct);
-
   const productPropsToOrder = {
     product: getProductPropsToOrder(productState, productsProps),
     order: [
@@ -59,18 +61,28 @@ const Calculator = ({
     changedPropValue
   ) => {
     setProductState((prev) => {
-      const newProductState = { ...prev };
-
-      syncActiveInputs(
-        productsProps,
-        newProductState,
-        propsGroupName,
-        changedPropName,
-        changedPropValue,
-        except
-      );
+      let newProductState = Object.assign({}, prev);
 
       newProductState[propsGroupName][changedPropName].value = changedPropValue;
+
+      if (isActiveInputs) {
+        newProductState = syncActiveInputs(
+          productsProps,
+          newProductState,
+          propsGroupName,
+          changedPropName,
+          changedPropValue,
+          except
+        );
+      } else {
+        setCurrentStateToSimilar(
+          newProductState[propsGroupName],
+          productsProps[propsGroupName],
+          changedPropName
+        );
+      }
+
+      // newProductState[propsGroupName][changedPropName].value = changedPropValue;
       newProductState.total = calculateTotalPrice(
         newProductState,
         productsProps,
@@ -151,7 +163,10 @@ const Calculator = ({
               activeInputs={
                 productState[field.propGroup][field.propName].active
               }
-              currentValue={productState[field.propGroup][field.propName].value}
+              currentValue={
+                productState[field.propGroup][field.propName].value ??
+                productState[field.propGroup][field.propName]
+              }
               handleInputChange={handleInputChange}
             />
           ))
@@ -172,7 +187,22 @@ const Calculator = ({
             ))
           : ""}
       </div>
-      {productContent ?? ""}
+      {stateContent && (
+        <div>
+          <strong>
+            {
+              productsProps.titles.filter(
+                (item) => Object.keys(item)[0] === stateContent
+              )[0][stateContent]
+            }
+          </strong>
+          <p>
+            {stateContent
+              ? getPropValueByTitle(productState, stateContent)
+              : ""}
+          </p>
+        </div>
+      )}
 
       <Total
         total={productState.total}
