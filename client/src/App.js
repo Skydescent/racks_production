@@ -1,11 +1,11 @@
-import React from 'react';
-import { Route, Switch } from 'react-router-dom';
-import Header from './components/Header';
-import './styles/styles.css';
-import './styles/media.css';
+import React from "react";
+import { Route, Switch } from "react-router-dom";
+import Header from "./components/Header";
+import "./styles/styles.css";
+import "./styles/media.css";
 
-import Racks from './pages/Racks';
-import TestNodeMailer from './components/TestNodeMailer';
+import Racks from "./pages/Racks";
+import MetalCabinets from "./pages/MetalCabinets";
 
 function App() {
   return (
@@ -17,10 +17,9 @@ function App() {
         </Route>
         <Route exact path="/garderobnyye_sistemy">
           <div>Гардеробные системы</div>
-          <TestNodeMailer />
         </Route>
         <Route exact path="/shkafy_metallicheskiye">
-          <div>Шкафы металлические</div>
+          <MetalCabinets />
         </Route>
         <Route exact path="/gruzovyye">
           <div>Грузовые стиллажи</div>

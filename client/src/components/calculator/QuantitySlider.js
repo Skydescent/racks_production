@@ -1,17 +1,16 @@
-import React from 'react';
+import React from "react";
 
 const QuantitySlider = ({
   title,
   min,
   max,
   step,
-  name,
+  propName,
   handleQuantitySliderMove,
-  propGroup,
   currentValue,
 }) => {
-  const handleCurrentQuantitySlider = event => {
-    handleQuantitySliderMove(propGroup, event.target.value);
+  const handleCurrentQuantitySlider = (event) => {
+    handleQuantitySliderMove(propName, event.target.value);
   };
   return (
     <div>
@@ -22,11 +21,11 @@ const QuantitySlider = ({
         max={max}
         step={step}
         value={currentValue}
-        name={name}
+        name={propName}
         onInput={handleCurrentQuantitySlider}
         onChange={handleCurrentQuantitySlider}
       />
-      <span className={`${name}_val`}> {currentValue} шт.</span>
+      <span> {currentValue} шт.</span>
     </div>
   );
 };
