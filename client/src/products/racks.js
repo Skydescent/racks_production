@@ -1,4 +1,12 @@
 export const racksProps = {
+  titles: [
+    { bar_height: "Высота стеллажа, см" },
+    { shelf_depth: "Глубина полки см" },
+    { shelf_width: "Ширина полки, см" },
+    { bar_load: "Нагрузка на стеллаж, кг" },
+    { shelfQnt: "Количество полок" },
+    { itemsQnt: "Количество стеллажей" },
+  ],
   shelf: [
     { depth: 30, width: 70, price: 285 },
     { depth: 30, width: 100, price: 370 },
@@ -23,7 +31,7 @@ export const racksProps = {
     { depth: 80, width: 70, price: 840 },
     { depth: 80, width: 100, price: 815 },
   ],
-  rack: [
+  bar: [
     { height: 50, load: 750, price: 170 },
     { height: 100, load: 500, price: 200 },
     { height: 100, load: 750, price: 220 },
@@ -47,41 +55,6 @@ export const racksProps = {
     { height: 300, load: 750, price: 400 },
     { height: 300, load: 900, price: 500 },
   ],
-  installation: [
-    { type: 'self_install', name: 'самостоятельная', price: 0 },
-    {
-      type: 'build',
-      name: 'собрать стеллаж',
-      price: [
-        { shelvesQuantity: '1:5', value: 500 },
-        { shelvesQuantity: '4:7', value: 600 },
-        { shelvesQuantity: '6:9', value: 700 },
-        { shelvesQuantity: '8:11', value: 800 },
-      ],
-    },
-    {
-      type: 'build_fix',
-      name: 'собрать и закрепить к стене',
-      price: [{ shelvesQuantity: 'all', value: 100 }],
-    },
-  ],
-  delivery: [
-    { type: 'self_delivery', name: 'самовывоз', price: 0 },
-    { type: 'daytime', name: 'дневная', price: 200 },
-    { type: 'evening', name: 'вечерняя', price: 0 },
-  ],
-  subDelivery: [
-    {
-      type: 'to_entrance',
-      name: 'до подъезда',
-      price: 0,
-    },
-    {
-      type: 'to_flat',
-      name: 'до квартиры',
-      price: 100,
-    },
-  ],
 };
 
 export const initialRack = {
@@ -95,7 +68,7 @@ export const initialRack = {
       active: [70, 100, 120, 150],
     },
   },
-  rack: {
+  bar: {
     height: {
       value: 100,
       active: [50, 100, 120, 150, 180, 200, 220, 230, 240, 250, 300],
@@ -105,10 +78,10 @@ export const initialRack = {
       active: [500, 750],
     },
   },
-  shelvesQuantity: 4,
-  racksQuantity: 1,
-  installation: 'self_install',
-  delivery: 'self_delivery',
-  subDelivery: 'to_flat',
+  shelfQnt: 4,
+  barQnt: 4,
+  itemsQnt: 1,
+  installation: "self_install",
+  delivery: ["self_delivery"],
   total: 2720,
 };
