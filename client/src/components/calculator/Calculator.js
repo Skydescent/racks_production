@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import InputsField from "./InputsField";
 import QuantitySlider from "./QuantitySlider";
+import CalculatorField from "./CalculatorField";
 import Total from "./Total";
 import Delivery from "./Delivery";
 import Installation from "./Installation";
@@ -17,6 +18,9 @@ import {
   getNameByType,
   setCurrentStateToSimilar,
   getPropValueByTitle,
+  getValueByFullName,
+  getPropNameByPos,
+  isQuantity,
 } from "../../helpers";
 
 const Calculator = ({
@@ -150,6 +154,31 @@ const Calculator = ({
     });
   };
 
+  const prepareRender = (productsProps, productState, renderOrder, except) => {
+    let elements = [];
+    renderOrder.forEach((fullName) => {
+      let propValue = getValueByFullName(productState, fullName);
+      if (propValue) {
+        if (isQuantity(getPropNameByPos(fullName))) {
+          elements.push({ render: "QuantitySlider", name: fullName });
+        } else {
+          elements.push({ render: "InputsField", name: fullName });
+        }
+      }
+    });
+
+    return elements;
+  };
+
+  const renderOrder = [
+    { type: "content", name: "items_model" },
+    { type: "field", name: "items_height" },
+    { type: "field", name: "items_depth" },
+    { type: "field", name: "items_sections" },
+    { type: "field", name: "items_shelves" },
+    { type: "content", name: "items_set" },
+  ];
+
   return (
     <div>
       {fieldsSet
@@ -202,6 +231,37 @@ const Calculator = ({
               : ""}
           </p>
         </div>
+      )}
+
+      {renderOrder.map(
+        ({ type, name }) =>
+          type === "field" && (
+            <InputsField
+              key={name}
+              title={getValueByFullName(productState, name)}
+              propGroup={getPropNameByPos(name, 0)}
+              propName={getPropNameByPos(name, "last")}
+              propValues={
+                propValues[getPropNameByPos(name, 0)][
+                  getPropNameByPos(name, "last")
+                ]
+              }
+              activeInputs={
+                productState[getPropNameByPos(name, 0)][
+                  getPropNameByPos(name, "last")
+                ].active
+              }
+              currentValue={
+                productState[getPropNameByPos(name, 0)][
+                  getPropNameByPos(name, "last")
+                ].value ??
+                productState[getPropNameByPos(name, 0)][
+                  getPropNameByPos(name, "last")
+                ]
+              }
+              handleInputChange={handleInputChange}
+            />
+          )
       )}
 
       <Total

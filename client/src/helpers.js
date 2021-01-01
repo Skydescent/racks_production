@@ -1,8 +1,27 @@
 const getUniqueValuesArr = (arr) => [...new Set(arr)];
 
+const getNamesArr = (fullName) => fullName.split("_");
+
+export const isQuantity = (propName) => propName.includes("Qnt");
+
+export const getPropNameByPos = (fullName, pos = "last") => {
+  const namesArr = getNamesArr(fullName);
+  if (pos === "last") {
+    return namesArr[namesArr.length - 1];
+  }
+  return namesArr[pos];
+};
+
 export const getPropValueByTitle = (productState, title) => {
-  const propsNames = title.split("_");
+  const propsNames = getNamesArr(title);
   const prop = propsNames.reduce((acc, curr) => acc[curr] ?? acc, productState);
+  return prop.value ?? prop;
+};
+
+// Проверить работу взамен getPropValueByTitle
+export const getValueByFullName = (state, fullName) => {
+  const namesArr = getNamesArr(fullName);
+  const prop = namesArr.reduce((acc, curr) => acc[curr] ?? false, state);
   return prop.value ?? prop;
 };
 
