@@ -21,6 +21,7 @@ import {
   getValueByFullName,
   getPropNameByPos,
   isQuantity,
+  getTitle,
 } from "../../helpers";
 
 const Calculator = ({
@@ -33,6 +34,7 @@ const Calculator = ({
   except = ["price"],
   isInstallation,
   isActiveInputs,
+  renderOrder,
 }) => {
   const [productState, setProductState] = useState(initialProduct);
   const productPropsToOrder = {
@@ -170,18 +172,9 @@ const Calculator = ({
     return elements;
   };
 
-  const renderOrder = [
-    { type: "content", name: "items_model" },
-    { type: "field", name: "items_height" },
-    { type: "field", name: "items_depth" },
-    { type: "field", name: "items_sections" },
-    { type: "field", name: "items_shelves" },
-    { type: "content", name: "items_set" },
-  ];
-
   return (
     <div>
-      {fieldsSet
+      {/* {fieldsSet
         ? fieldsSet.map((field) => (
             <InputsField
               key={field.propGroup + "_" + field.propName}
@@ -231,38 +224,19 @@ const Calculator = ({
               : ""}
           </p>
         </div>
-      )}
+      )} */}
 
-      {renderOrder.map(
-        ({ type, name }) =>
-          type === "field" && (
-            <InputsField
-              key={name}
-              title={getValueByFullName(productState, name)}
-              propGroup={getPropNameByPos(name, 0)}
-              propName={getPropNameByPos(name, "last")}
-              propValues={
-                propValues[getPropNameByPos(name, 0)][
-                  getPropNameByPos(name, "last")
-                ]
-              }
-              activeInputs={
-                productState[getPropNameByPos(name, 0)][
-                  getPropNameByPos(name, "last")
-                ].active
-              }
-              currentValue={
-                productState[getPropNameByPos(name, 0)][
-                  getPropNameByPos(name, "last")
-                ].value ??
-                productState[getPropNameByPos(name, 0)][
-                  getPropNameByPos(name, "last")
-                ]
-              }
-              handleInputChange={handleInputChange}
-            />
-          )
-      )}
+      {renderOrder &&
+        renderOrder.map(({ type, name }) => (
+          <CalculatorField
+            key={name}
+            tag={type}
+            productsProps={productsProps}
+            productState={productState}
+            name={name}
+            handler={handleInputChange}
+          />
+        ))}
 
       <Total
         total={productState.total}

@@ -2,6 +2,13 @@ const getUniqueValuesArr = (arr) => [...new Set(arr)];
 
 const getNamesArr = (fullName) => fullName.split("_");
 
+export const getTitle = (productsProps, name) =>
+  (productsProps.titles &&
+    productsProps.titles.filter((item) => Object.keys(item).includes(name))[0][
+      name
+    ]) ??
+  null;
+
 export const isQuantity = (propName) => propName.includes("Qnt");
 
 export const getPropNameByPos = (fullName, pos = "last") => {
@@ -93,17 +100,17 @@ export const getNameByType = (types, type) => {
   return types.reduce((acc, curr) => acc + " " + curr.name, "");
 };
 
-const getProductPropValues = (productsProps, prop) =>
+export const getProductPropValues = (productsProps, prop) =>
   getUniqueValuesArr(
     productsProps.map((item) =>
       item.name ? { title: item.name, value: item[prop] } : item[prop]
     )
   );
 
-const getGroupPropsValues = (propsGroup, except) => {
+const getGroupPropsValues = (propsGroup, except = null) => {
   return Object.fromEntries(
     Object.keys(propsGroup[0])
-      .filter((propName) => !except.includes(propName))
+      .filter((propName) => !except.includes(propName) || !except)
       .map((propName) => [propName, getProductPropValues(propsGroup, propName)])
   );
 };
