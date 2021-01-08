@@ -15,6 +15,7 @@ import {
   getNameByType,
   setCurrentStateToSimilar,
   setValueByFullName,
+  getValueByFullName,
 } from "../../helpers";
 
 const Calculator = ({
@@ -24,6 +25,7 @@ const Calculator = ({
   isInstallation,
   isActiveInputs,
   renderOrder,
+  productsImages,
 }) => {
   const [productState, setProductState] = useState(initialProduct);
   const productPropsToOrder = {
@@ -65,7 +67,6 @@ const Calculator = ({
         delivery,
         installation
       );
-      console.log(newProductState);
       return newProductState;
     });
   };
@@ -132,43 +133,59 @@ const Calculator = ({
       return newProductState;
     });
   };
+  const renderProductImage = () => {
+    if (productsImages.fullName) {
+      const value = getValueByFullName(productState, productsImages.fullName);
+      const img = productsImages.images.filter(
+        (item) => item.value === value
+      )[0].image;
+      return <img src={img} alt="main_img" />;
+    }
+
+    if (productsImages.image)
+      return <img src={productsImages.image} alt="main_img" />;
+  };
 
   return (
-    <div>
-      {renderOrder &&
-        renderOrder.map(({ type, name, range }) => (
-          <CalculatorField
-            key={name}
-            tag={type}
-            productsProps={productsProps}
-            productState={productState}
-            name={name}
-            range={range ?? null}
-            handlers={{
-              field: handleInputChange,
-              slider: handleQuantitySliderMove,
-            }}
-          />
-        ))}
+    <div className="product_calc">
+      <div>{renderProductImage()}</div>
+      <div>
+        {productsProps.name && <h1>{productsProps.name}</h1>}
+        {renderOrder &&
+          renderOrder.map(({ type, name, range }) => (
+            <CalculatorField
+              key={name}
+              tag={type}
+              productsProps={productsProps}
+              productState={productState}
+              name={name}
+              range={range ?? null}
+              handlers={{
+                field: handleInputChange,
+                slider: handleQuantitySliderMove,
+              }}
+            />
+          ))}
 
-      <Total
-        total={productState.total}
-        deliveryType={productState.delivery}
-        order={<PopupOrder productPropsToOrder={productPropsToOrder} />}
-      >
-        <Delivery
-          delivery={delivery}
-          productState={productState}
-          handleDeliveryChange={handleDeliveryChange}
-        />
-        {isInstallation && (
-          <Installation
-            installation={installation}
+        <Total
+          total={productState.total}
+          deliveryType={productState.delivery}
+          order={<PopupOrder productPropsToOrder={productPropsToOrder} />}
+        >
+          <Delivery
+            delivery={delivery}
             productState={productState}
-            hadleInstallChange={hadleInstallChange}
+            handleDeliveryChange={handleDeliveryChange}
           />
-        )}
-      </Total>
+          {isInstallation && (
+            <Installation
+              installation={installation}
+              productState={productState}
+              hadleInstallChange={hadleInstallChange}
+            />
+          )}
+        </Total>
+      </div>
     </div>
   );
 };
