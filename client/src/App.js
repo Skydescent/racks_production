@@ -6,6 +6,9 @@ import "./styles/media.css";
 
 import Racks from "./pages/Racks";
 import MetalCabinets from "./pages/MetalCabinets";
+import WardrobeSystems from "./pages/WardrobeSystems";
+import CargoRack from "./pages/CargoRack";
+import TireStorage from "./pages/TireStorage";
 
 function App() {
   return (
@@ -16,16 +19,16 @@ function App() {
           <Racks />
         </Route>
         <Route exact path="/garderobnyye_sistemy">
-          <div>Гардеробные системы</div>
+          <WardrobeSystems />
         </Route>
         <Route exact path="/shkafy_metallicheskiye">
           <MetalCabinets />
         </Route>
         <Route exact path="/gruzovyye">
-          <div>Грузовые стиллажи</div>
+          <CargoRack />
         </Route>
         <Route exact path="/khraneniye_shin">
-          <div>Хранение Шин</div>
+          <TireStorage />
         </Route>
         <Route exact path="/bytovyye">
           <div>Бытовые стиллажи</div>

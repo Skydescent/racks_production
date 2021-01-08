@@ -25,7 +25,8 @@ const Calculator = ({
   isInstallation,
   isActiveInputs,
   renderOrder,
-  productsImages,
+  productsImages = null,
+  children,
 }) => {
   const [productState, setProductState] = useState(initialProduct);
   const productPropsToOrder = {
@@ -44,6 +45,7 @@ const Calculator = ({
         value: productState.total,
       },
     ],
+    name: productsProps.name ?? "Стеллажи",
   };
 
   const handleInputChange = (fullName, propsGroupName, changedPropValue) => {
@@ -134,23 +136,34 @@ const Calculator = ({
     });
   };
   const renderProductImage = () => {
-    if (productsImages.fullName) {
-      const value = getValueByFullName(productState, productsImages.fullName);
-      const img = productsImages.images.filter(
-        (item) => item.value === value
-      )[0].image;
-      return <img src={img} alt="main_img" />;
-    }
+    if (productsImages) {
+      if (productsImages.fullName) {
+        const value = getValueByFullName(productState, productsImages.fullName);
+        const img = productsImages.images.filter(
+          (item) => item.value === value
+        )[0].image;
+        return (
+          <div>
+            <img src={img} alt="main_img" />
+          </div>
+        );
+      }
 
-    if (productsImages.image)
-      return <img src={productsImages.image} alt="main_img" />;
+      if (productsImages.image)
+        return (
+          <div>
+            <img src={productsImages.image} alt="main_img" />
+          </div>
+        );
+    }
   };
 
   return (
     <div className="product_calc">
-      <div>{renderProductImage()}</div>
+      {renderProductImage()}
       <div>
         {productsProps.name && <h1>{productsProps.name}</h1>}
+        {children}
         {renderOrder &&
           renderOrder.map(({ type, name, range }) => (
             <CalculatorField

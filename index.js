@@ -15,7 +15,8 @@ app.post("/api/send", (req, res) => {
   <h3>Новый заказ:</h3>
   <ul>  
     <li>Телефон: ${req.body.phone}</li>
-    <li>Электронный адрес: ${req.body.email}</li>` +
+    <li>Электронный адрес: ${req.body.email}</li>
+    <li>Категория товара: ${req.body.name}</li>` +
     req.body.product.reduce(
       (acc, cur) => acc + `<li>${cur.title}: ${cur.value} </li>`,
       ""
