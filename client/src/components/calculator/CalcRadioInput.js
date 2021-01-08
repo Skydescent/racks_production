@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 const CalcRadioInput = ({
   title,
@@ -9,19 +9,19 @@ const CalcRadioInput = ({
   isChecked,
 }) => (
   <p>
-    <label htmlFor={`${propName}_${value}`}>
-      {title}
+    <span onClick={isActive ? onChange : null}>
       <input
+        readOnly
+        id={`${propName}_${value}`}
+        className="radio"
         type="radio"
         name={`${propName}_${value}`}
         value={value}
-        className="radio"
-        id={`${propName}_${value}`}
-        onChange={onChange}
         checked={isChecked}
         disabled={!isActive}
       />
-    </label>
+      <span>{title}</span>
+    </span>
   </p>
 );
 

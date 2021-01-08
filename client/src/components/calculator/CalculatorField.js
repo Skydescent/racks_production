@@ -1,8 +1,7 @@
 import React from "react";
 import InputsField from "./InputsField";
 import QuantitySlider from "./QuantitySlider";
-import TestInputsField from "./TestInputsField";
-import { getTitle } from "../../helpers";
+import { getTitle, getPropNameByPos, getValueByFullName } from "../../helpers";
 import CalcContent from "./CalcContent";
 
 const CalculatorField = ({
@@ -10,22 +9,29 @@ const CalculatorField = ({
   productsProps,
   productState,
   name,
-  handler,
+  handlers,
+  range,
 }) => {
   const components = {
-    field: TestInputsField,
+    field: InputsField,
     slider: QuantitySlider,
     content: CalcContent,
   };
   const TagName = components[tag];
-  const title = getTitle(productsProps, name);
+  const propGroup = getPropNameByPos(name, 0);
+  const propName = getPropNameByPos(name, "last");
+  const currentValue = getValueByFullName(productState, name);
   return (
     <TagName
-      title={title}
+      title={getTitle(productsProps, name)}
+      name={name}
       productsProps={productsProps}
       productState={productState}
-      name={name}
-      handler={handler}
+      currentValue={currentValue}
+      propGroup={propGroup}
+      propName={propName}
+      handler={handlers[tag]}
+      range={range}
     />
   );
 };

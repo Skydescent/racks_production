@@ -1,6 +1,4 @@
 import React, { useState } from "react";
-import InputsField from "./InputsField";
-import QuantitySlider from "./QuantitySlider";
 import CalculatorField from "./CalculatorField";
 import Total from "./Total";
 import Delivery from "./Delivery";
@@ -11,26 +9,17 @@ import { installation } from "../../products/installation";
 import { delivery } from "../../products/delivery";
 
 import {
-  getAllProductPropsValues,
   syncActiveInputs,
   calculateTotalPrice,
   getProductPropsToOrder,
   getNameByType,
   setCurrentStateToSimilar,
-  getPropValueByTitle,
-  getValueByFullName,
-  getPropNameByPos,
-  isQuantity,
-  getTitle,
+  setValueByFullName,
 } from "../../helpers";
 
 const Calculator = ({
-  fieldsSet,
-  slidersSet,
   productsProps,
-  stateContent,
   initialProduct,
-  propsGroups = [],
   except = ["price"],
   isInstallation,
   isActiveInputs,
@@ -55,46 +44,28 @@ const Calculator = ({
     ],
   };
 
-  const propValues = getAllProductPropsValues(
-    productsProps,
-    propsGroups,
-    except
-  );
-
-  const handleInputChange = (
-    propsGroupName,
-    changedPropName,
-    changedPropValue
-  ) => {
+  const handleInputChange = (fullName, propsGroupName, changedPropValue) => {
     setProductState((prev) => {
       let newProductState = Object.assign({}, prev);
-
-      newProductState[propsGroupName][changedPropName].value = changedPropValue;
+      setValueByFullName(newProductState, fullName, changedPropValue);
 
       if (isActiveInputs) {
         newProductState = syncActiveInputs(
+          fullName,
           productsProps,
           newProductState,
-          propsGroupName,
-          changedPropName,
-          changedPropValue,
           except
         );
       } else {
-        setCurrentStateToSimilar(
-          newProductState[propsGroupName],
-          productsProps[propsGroupName],
-          changedPropName
-        );
+        setCurrentStateToSimilar(newProductState, productsProps, fullName);
       }
-
-      // newProductState[propsGroupName][changedPropName].value = changedPropValue;
       newProductState.total = calculateTotalPrice(
         newProductState,
         productsProps,
         delivery,
         installation
       );
+      console.log(newProductState);
       return newProductState;
     });
   };
@@ -102,13 +73,19 @@ const Calculator = ({
   const handleQuantitySliderMove = (propName, value) => {
     setProductState((prev) => {
       const newProductState = { ...prev };
-      newProductState[propName] = value;
+
+      if (typeof newProductState[propName].value !== "undefined") {
+        newProductState[propName].value = value;
+      } else {
+        newProductState[propName] = value;
+      }
       newProductState.total = calculateTotalPrice(
         newProductState,
         productsProps,
         delivery,
         installation
       );
+
       return newProductState;
     });
   };
@@ -156,85 +133,21 @@ const Calculator = ({
     });
   };
 
-  const prepareRender = (productsProps, productState, renderOrder, except) => {
-    let elements = [];
-    renderOrder.forEach((fullName) => {
-      let propValue = getValueByFullName(productState, fullName);
-      if (propValue) {
-        if (isQuantity(getPropNameByPos(fullName))) {
-          elements.push({ render: "QuantitySlider", name: fullName });
-        } else {
-          elements.push({ render: "InputsField", name: fullName });
-        }
-      }
-    });
-
-    return elements;
-  };
-
   return (
     <div>
-      {/* {fieldsSet
-        ? fieldsSet.map((field) => (
-            <InputsField
-              key={field.propGroup + "_" + field.propName}
-              title={field.title}
-              propGroup={field.propGroup}
-              propName={field.propName}
-              propValues={propValues[field.propGroup][field.propName]}
-              activeInputs={
-                productState[field.propGroup][field.propName].active
-              }
-              currentValue={
-                productState[field.propGroup][field.propName].value ??
-                productState[field.propGroup][field.propName]
-              }
-              handleInputChange={handleInputChange}
-            />
-          ))
-        : ""}
-      <div className="flex grid_2 range">
-        {slidersSet
-          ? slidersSet.map((slider) => (
-              <QuantitySlider
-                key={slider.propName}
-                title={slider.title}
-                min={slider.range.split(":")[0]}
-                max={slider.range.split(":")[1]}
-                step={slider.step ?? 1}
-                propName={slider.propName}
-                handleQuantitySliderMove={handleQuantitySliderMove}
-                currentValue={productState[slider.propName]}
-              />
-            ))
-          : ""}
-      </div>
-      {stateContent && (
-        <div>
-          <strong>
-            {
-              productsProps.titles.filter(
-                (item) => Object.keys(item)[0] === stateContent
-              )[0][stateContent]
-            }
-          </strong>
-          <p>
-            {stateContent
-              ? getPropValueByTitle(productState, stateContent)
-              : ""}
-          </p>
-        </div>
-      )} */}
-
       {renderOrder &&
-        renderOrder.map(({ type, name }) => (
+        renderOrder.map(({ type, name, range }) => (
           <CalculatorField
             key={name}
             tag={type}
             productsProps={productsProps}
             productState={productState}
             name={name}
-            handler={handleInputChange}
+            range={range ?? null}
+            handlers={{
+              field: handleInputChange,
+              slider: handleQuantitySliderMove,
+            }}
           />
         ))}
 

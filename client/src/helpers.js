@@ -2,6 +2,11 @@ const getUniqueValuesArr = (arr) => [...new Set(arr)];
 
 const getNamesArr = (fullName) => fullName.split("_");
 
+export const getGroupName = (fullName) =>
+  fullName.split("_").slice(0, -1).join("_");
+
+export const getRangeLimits = (range) => range.split(":");
+
 export const getTitle = (productsProps, name) =>
   (productsProps.titles &&
     productsProps.titles.filter((item) => Object.keys(item).includes(name))[0][
@@ -32,6 +37,33 @@ export const getValueByFullName = (state, fullName) => {
   return prop.value ?? prop;
 };
 
+export const setValueByFullName = (state, fullName, value) => {
+  const [head, ...rest] = getNamesArr(fullName);
+
+  if (!rest.length) {
+    if (state[head]) {
+      if (state[head].value) {
+        state[head].value = value;
+      } else {
+        state[head] = value;
+      }
+    } else {
+      return false;
+    }
+  }
+  setValueByFullName(state[head], rest.join("_"), value);
+};
+
+const setValuesByFullName = (state, items) => {
+  items.forEach((item) => {
+    setValueByFullName(state, item.name, item.value);
+  });
+};
+
+export const getGroupProps = (productsProps, fullName) => {
+  return getValueByFullName(productsProps, getGroupName(fullName));
+};
+
 const rateStates = (propState, productState, changedPropName) =>
   Object.keys(productState).reduce((rating, curName) => {
     if (productState[curName].value === propState[curName]) {
@@ -59,16 +91,19 @@ const getSimilarState = (productState, productsProps, changedPropName) => {
 
 export const setCurrentStateToSimilar = (
   productState,
-  productProps,
-  changedPropName
+  productsProps,
+  fullName
 ) => {
+  const productGroupState = getGroupProps(productState, fullName);
+  const productsGroupProps = getGroupProps(productsProps, fullName);
   const similarState = getSimilarState(
-    productState,
-    productProps,
-    changedPropName
+    productGroupState,
+    productsGroupProps,
+    getPropNameByPos(fullName, "last")
   );
-  Object.keys(productState).forEach((propName) => {
-    productState[propName].value = similarState[propName];
+
+  Object.keys(productGroupState).forEach((propName) => {
+    productGroupState[propName].value = similarState[propName];
   });
 };
 
@@ -81,7 +116,7 @@ const getCostByQntRange = (ranges, rangePropName, qnt) =>
     if (item[rangePropName] === "all") {
       return true;
     }
-    const [min, max] = item[rangePropName].split(":");
+    const [min, max] = getRangeLimits(item[rangePropName]);
     return qnt > min && qnt < max;
   })[0].value * qnt;
 
@@ -100,34 +135,14 @@ export const getNameByType = (types, type) => {
   return types.reduce((acc, curr) => acc + " " + curr.name, "");
 };
 
-export const getProductPropValues = (productsProps, prop) =>
-  getUniqueValuesArr(
-    productsProps.map((item) =>
-      item.name ? { title: item.name, value: item[prop] } : item[prop]
+export const getProductPropValues = (productsProps, fullName) => {
+  const groupProps = getGroupProps(productsProps, fullName);
+  const propName = getPropNameByPos(fullName, "last");
+  return getUniqueValuesArr(
+    groupProps.map((item) =>
+      item.name ? { title: item.name, value: item[propName] } : item[propName]
     )
   );
-
-const getGroupPropsValues = (propsGroup, except = null) => {
-  return Object.fromEntries(
-    Object.keys(propsGroup[0])
-      .filter((propName) => !except.includes(propName) || !except)
-      .map((propName) => [propName, getProductPropValues(propsGroup, propName)])
-  );
-};
-
-export const getAllProductPropsValues = (
-  productsProps,
-  propsGroupsNames = [],
-  except = ["price"]
-) => {
-  return propsGroupsNames.length === 0
-    ? getGroupPropsValues(productsProps, except)
-    : Object.fromEntries(
-        propsGroupsNames.map((groupName) => [
-          groupName,
-          getGroupPropsValues(productsProps[groupName], except),
-        ])
-      );
 };
 
 export const createActiveInputs = (
@@ -172,29 +187,37 @@ export const getActiveInputs = (
   return Object.fromEntries(activeInputsArr);
 };
 
-// Максимально похожий объект
 export const syncActiveInputs = (
+  fullName,
   productsProps,
   productState,
-  propsGroupName,
-  changedPropName,
-  changedPropValue,
   except
 ) => {
   const activeInputs = getActiveInputs(
-    productsProps[propsGroupName],
-    productState[propsGroupName],
-    changedPropName,
-    changedPropValue,
+    getGroupProps(productsProps, fullName),
+    getGroupProps(productState, fullName),
+    getPropNameByPos(fullName, "last"),
+    getValueByFullName(productState, fullName),
     except
   );
 
   Object.keys(activeInputs).forEach((propName) => {
-    productState[propsGroupName][propName].active = activeInputs[propName];
-    productState[propsGroupName][propName].value = currentActiveValue(
-      productState[propsGroupName][propName].value,
-      activeInputs[propName]
-    );
+    setValuesByFullName(productState, [
+      {
+        name: `${getGroupName(fullName)}_${propName}_active`,
+        value: activeInputs[propName],
+      },
+      {
+        name: `${getGroupName(fullName)}_${propName}_value`,
+        value: currentActiveValue(
+          getValueByFullName(
+            productState,
+            `${getGroupName(fullName)}_${propName}_value`
+          ),
+          activeInputs[propName]
+        ),
+      },
+    ]);
   });
 
   return productState;
@@ -215,7 +238,7 @@ const getPrice = (productsPropsGroup, stateItem) => {
 };
 
 const getItemPrice = (
-  productProps,
+  productsProps,
   productState,
   except = ["installation", "delivery", "subDelivery", "total", "set"]
 ) => {
@@ -226,7 +249,20 @@ const getItemPrice = (
     .forEach((propName) => {
       if (!propName.includes("Qnt")) {
         let qnt = productState[propName + "Qnt"] ?? 1;
-        total += qnt * getPrice(productProps[propName], productState[propName]);
+        total +=
+          qnt * getPrice(productsProps[propName], productState[propName]);
+      }
+
+      if (propName.includes("Qnt") && productState[propName].fullName) {
+        let qnt = productState[propName].value;
+        total +=
+          qnt *
+          getValueByFullName(
+            productState,
+            productState[propName].fullName + "_value"
+          );
+
+        console.log(productState[propName].fullName + "_value");
       }
     });
 

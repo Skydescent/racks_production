@@ -1,11 +1,10 @@
 import React from "react";
-import { getTitle, getValueByFullName } from "../../helpers";
 
-const CalcContent = ({ name, productsProps, productState }) => {
+const CalcContent = ({ title, currentValue }) => {
   return (
     <div className="range">
-      <strong>{getTitle(productsProps, name)}</strong>
-      <p>{getValueByFullName(productState, name)}</p>
+      <strong>{title}</strong>
+      <p>{currentValue}</p>
     </div>
   );
 };

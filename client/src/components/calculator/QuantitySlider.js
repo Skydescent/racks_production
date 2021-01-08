@@ -1,17 +1,18 @@
 import React from "react";
+import { getRangeLimits } from "../../helpers";
 
 const QuantitySlider = ({
   title,
-  min,
-  max,
-  step,
-  propName,
-  handleQuantitySliderMove,
   currentValue,
+  propName,
+  handler,
+  range,
+  step,
 }) => {
   const handleCurrentQuantitySlider = (event) => {
-    handleQuantitySliderMove(propName, event.target.value);
+    handler(propName, event.target.value);
   };
+  const [min, max] = getRangeLimits(range);
   return (
     <div>
       <strong>{title}</strong>
@@ -19,7 +20,7 @@ const QuantitySlider = ({
         type="range"
         min={min}
         max={max}
-        step={step}
+        step={step ?? 1}
         value={currentValue}
         name={propName}
         onInput={handleCurrentQuantitySlider}
