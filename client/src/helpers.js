@@ -261,8 +261,6 @@ const getItemPrice = (
             productState,
             productState[propName].fullName + "_value"
           );
-
-        console.log(productState[propName].fullName + "_value");
       }
     });
 
