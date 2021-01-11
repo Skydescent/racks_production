@@ -27,7 +27,6 @@ const OrderForm = ({ productPropsToOrder }) => {
     }
 
     const data = { ...orderState, ...productPropsToOrder };
-    console.log(data);
 
     sendMail(data).then((response) => {
       if (response.result === "success") {

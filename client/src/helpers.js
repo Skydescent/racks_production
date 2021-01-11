@@ -30,7 +30,6 @@ export const getPropValueByTitle = (productState, title) => {
   return prop.value ?? prop;
 };
 
-// Проверить работу взамен getPropValueByTitle
 export const getValueByFullName = (state, fullName) => {
   const namesArr = getNamesArr(fullName);
   const prop = namesArr.reduce((acc, curr) => acc[curr] ?? false, state);
@@ -267,18 +266,23 @@ const getItemPrice = (
   return total;
 };
 
-const getDeliveryCost = ({ types }, { delivery }) =>
+export const getDeliveryCost = ({ types }, { delivery }) =>
   types.reduce(
     (acc, curr) => (delivery.includes(curr.type) ? acc + curr.price : acc),
     0
   );
 
-const getInstallationCost = ({ types }, { installation, shelfQnt }) =>
+export const getInstallationCost = (
+  { types },
+  { installation, shelfQnt, price }
+) =>
   types
     .filter((item) => installation.includes(item.type))
     .map((item) =>
-      item.price.length
+      Array.isArray(item.price)
         ? getCostByQntRange(item.price, "shelfQnt", shelfQnt)
+        : typeof item.price === "string" && item.price.includes("price*")
+        ? item.price.replace("price*", "") * price
         : item.price
     )
     .reduce((accum, current) => accum + current);

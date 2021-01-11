@@ -1,12 +1,12 @@
-import React from 'react';
-import { Link } from 'react-router-dom';
+import React from "react";
+import { Link } from "react-router-dom";
 
 const links = [
-  { to: '/garderobnyye_sistemy', text: 'Гардеробные системы' },
-  { to: '/shkafy_metallicheskiye', text: 'Шкафы металлические' },
-  { to: '/gruzovyye', text: 'Грузовые стиллажи' },
-  { to: '/khraneniye_shin', text: 'Хранение Шин' },
-  { to: '/bytovyye', text: 'Бытовые стиллажи' },
+  { to: "/garderobnyye_sistemy", text: "Гардеробные системы" },
+  { to: "/shkafy_metallicheskiye", text: "Шкафы металлические" },
+  { to: "/gruzovyye", text: "Грузовые стеллажи" },
+  { to: "/khraneniye_shin", text: "Хранение Шин" },
+  { to: "/bytovyye", text: "Бытовые стеллажи" },
 ];
 
 function Header() {
@@ -33,7 +33,7 @@ function Header() {
         </div>
         <nav className="nav_container">
           <div className="nav_list">
-            {links.map(item => (
+            {links.map((item) => (
               <Link key={item.to} className="section_list_link" to={item.to}>
                 {item.text}
               </Link>

@@ -10,6 +10,7 @@ export const metalCabinets = {
     { items_shelves: "Количество полок" },
     { items_drawer: "Количество ящиков" },
     { items_set: "Комплектация" },
+    { itemsQnt: "Количество шкафов" },
     { addShelfPriceQnt: "Количество дополнительных полок" },
   ],
   items: [
@@ -471,6 +472,21 @@ export const metalCabinets = {
       price: 121,
     },
   ],
+  installation: {
+    types: [
+      { type: "self_install", name: "самостоятельная", price: 0 },
+      {
+        type: "build",
+        name: "собрать стеллаж",
+        price: 300,
+      },
+      {
+        type: "build_fix",
+        name: "собрать и закрепить к стене",
+        price: 400,
+      },
+    ],
+  },
   initialState: {
     items: {
       model: { value: "ШРМ-АК/500", active: "all" },

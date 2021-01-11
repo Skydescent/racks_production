@@ -29,6 +29,14 @@ const Calculator = ({
   children,
 }) => {
   const [productState, setProductState] = useState(initialProduct);
+  if (productsProps.installation) {
+    Object.keys(productsProps.installation).forEach((key) => {
+      if (installation[key]) {
+        installation[key] = productsProps.installation[key];
+      }
+    });
+  }
+
   const productPropsToOrder = {
     product: getProductPropsToOrder(productState, productsProps),
     order: [
@@ -48,6 +56,18 @@ const Calculator = ({
     name: productsProps.name ?? "Стеллажи",
   };
 
+  const handleStateChange = (newProductState) => {
+    setProductState((prev) => {
+      newProductState.total = calculateTotalPrice(
+        newProductState,
+        productsProps,
+        delivery,
+        installation
+      );
+
+      return newProductState;
+    });
+  };
   const handleInputChange = (fullName, propsGroupName, changedPropValue) => {
     setProductState((prev) => {
       let newProductState = Object.assign({}, prev);
@@ -93,48 +113,6 @@ const Calculator = ({
     });
   };
 
-  const handleDeliveryChange = (deliveryType) => {
-    setProductState((prev) => {
-      const newProductState = { ...prev };
-      const parents = delivery.types.reduce((acc, curr) =>
-        curr.parent ? new Set(curr.parent.concat(acc)) : acc
-      );
-      if (!newProductState.delivery.includes(deliveryType)) {
-        const deliveryTypeItem = delivery.types.filter(
-          (item) => item.type === deliveryType
-        )[0];
-        if (deliveryTypeItem.parent) {
-          newProductState.delivery[1] = deliveryType;
-        } else {
-          if (!newProductState.delivery[1])
-            newProductState.delivery[1] = delivery.defChild;
-          if (!parents.has(deliveryType)) newProductState.delivery = [];
-          newProductState.delivery[0] = deliveryType;
-        }
-      }
-      newProductState.total = calculateTotalPrice(
-        newProductState,
-        productsProps,
-        delivery,
-        installation
-      );
-      return newProductState;
-    });
-  };
-
-  const hadleInstallChange = (installType) => {
-    setProductState((prev) => {
-      const newProductState = { ...prev };
-      newProductState.installation = installType;
-      newProductState.total = calculateTotalPrice(
-        newProductState,
-        productsProps,
-        delivery,
-        installation
-      );
-      return newProductState;
-    });
-  };
   const renderProductImage = () => {
     if (productsImages) {
       if (productsImages.fullName) {
@@ -188,13 +166,13 @@ const Calculator = ({
           <Delivery
             delivery={delivery}
             productState={productState}
-            handleDeliveryChange={handleDeliveryChange}
+            handleStateChange={handleStateChange}
           />
           {isInstallation && (
             <Installation
               installation={installation}
               productState={productState}
-              hadleInstallChange={hadleInstallChange}
+              handleStateChange={handleStateChange}
             />
           )}
         </Total>

@@ -10,17 +10,19 @@ app.use(bodyParser.json());
 app.use(express.static(path.join(__dirname, "client/build")));
 
 app.post("/api/send", (req, res) => {
+  const productOutput = req.body.product
+    ? req.body.product.reduce(
+        (acc, cur) => acc + `<li>${cur.title}: ${cur.value} </li>`,
+        ""
+      )
+    : "";
   const output =
-    `
-  <h3>Новый заказ:</h3>
+    `<h3>Новый заказ:</h3>
   <ul>  
     <li>Телефон: ${req.body.phone}</li>
     <li>Электронный адрес: ${req.body.email}</li>
     <li>Категория товара: ${req.body.name}</li>` +
-    req.body.product.reduce(
-      (acc, cur) => acc + `<li>${cur.title}: ${cur.value} </li>`,
-      ""
-    ) +
+    productOutput +
     `<li>Комментарий к заказу: ${req.body.comment}</li>` +
     req.body.order.reduce(
       (acc, cur) => acc + `<li>${cur.title}: ${cur.value} </li>`,
@@ -42,7 +44,7 @@ app.post("/api/send", (req, res) => {
 
   let mailOptions = {
     from: '"Новый заказ" <skydescent@skydescent.su>',
-    to: "kirill310587@mail.ru, Stellage-tomsk@mail.ru",
+    to: "kirill310587@mail.ru", //Stellage-tomsk@mail.ru
     subject: "Новый заказ на стеллаж",
     text: "",
     html: output,

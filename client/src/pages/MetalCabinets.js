@@ -18,6 +18,7 @@ const MetalCabinets = () => {
     { type: "field", name: "items_drawer" },
     { type: "content", name: "items_set" },
     { type: "slider", name: "addShelfPriceQnt", range: "0:10" },
+    { type: "slider", name: "itemsQnt", range: "0:10" },
   ];
 
   const productsImages = {
@@ -36,6 +37,7 @@ const MetalCabinets = () => {
         initialProduct={productsProps.initialState}
         except={["price"]}
         isActiveInputs={false}
+        isInstallation={true}
         renderOrder={renderOrder}
         productsImages={productsImages}
       />
