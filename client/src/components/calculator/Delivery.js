@@ -23,7 +23,6 @@ const Delivery = ({ delivery, productState, handleStateChange }) => {
     handleStateChange(newProductState);
   };
 
-  console.log(productState.name);
   let deliveryTypes = delivery.types.filter((item) => {
     if (item.parent) {
       return item.parent.includes(productState.delivery[0]);

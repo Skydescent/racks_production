@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { sendMail } from "../services/MailService";
+import PhoneInput from 'react-phone-number-input';
 
 const OrderForm = ({ productPropsToOrder }) => {
   const [orderState, setOrder] = useState({
@@ -80,6 +81,7 @@ const OrderForm = ({ productPropsToOrder }) => {
         value="Отправить"
         name="submit"
         className="sbmt"
+        disabled={!orderState.phone && !orderState.email}
         onClick={(e) => handleSendOrderMail(e)}
       />
     </form>
