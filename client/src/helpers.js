@@ -2,6 +2,34 @@ const getUniqueValuesArr = (arr) => [...new Set(arr)];
 
 const getNamesArr = (fullName) => fullName.split("_");
 
+export const maskPhoneInput = (input) => {
+
+  if (input === null) return '';
+
+  if (input.length > 15) {
+    alert('Номер телефона не дожен иметь больше 11 цифр!');
+    return input.substring(0, 15);
+  }
+
+  if (input.length > 1 && input[0] !== '8' && input.substring(0,2) !== '+7') {
+    alert('Телефон должен начинаться с 8, либо с +7');
+    return '';
+  }
+
+  if (input.length < 3) return input;
+
+  const regexp =/(\+7|8)\(?(\d{0,3})?\)?(\d{0,3})?-?(\d{0,2})?-?(\d{0,2})?/g;
+
+  const  replacer = (match,p1,p2,p3,p4,p5) => {
+    if (!match) return '';
+    return `${p1 ? p1+'(' : ''}${p2 ? p2 : ''}${p3 ? ')'+p3 : ''}${p4 ? '-'+p4 : ''}${p5 ? '-'+p5 : ''}`;
+  }
+
+  let formatPhone = input.replace(regexp, replacer);
+
+  return formatPhone;
+}
+
 export const getGroupName = (fullName) =>
   fullName.split("_").slice(0, -1).join("_");
 

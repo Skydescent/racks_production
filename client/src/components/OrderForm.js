@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { sendMail } from "../services/MailService";
-import PhoneInput from 'react-phone-number-input';
+import { maskPhoneInput } from "../helpers";
 
 const OrderForm = ({ productPropsToOrder }) => {
   const [orderState, setOrder] = useState({
@@ -13,7 +13,11 @@ const OrderForm = ({ productPropsToOrder }) => {
   const handleFormChange = (e) => {
     setOrder((prev) => {
       const newOrder = { ...prev };
-      newOrder[e.target.name] = e.target.value;
+      if (e.target.name === 'phone') {
+        newOrder[e.target.name] = maskPhoneInput(e.target.value);
+      } else {
+        newOrder[e.target.name] = e.target.value;
+      }
       return newOrder;
     });
   };
@@ -21,9 +25,13 @@ const OrderForm = ({ productPropsToOrder }) => {
   const handleSendOrderMail = (e) => {
     e.preventDefault();
 
-    // Валидация полей формы заказа
     if (!orderState.phone && !orderState.email) {
       alert("Поля телефон и/или почта должны быть заполнены!");
+      return;
+    }
+
+    if (!orderState.email && (!orderState.phone || orderState.phone.length < 15) ) {
+      alert("Телефон должен иметь не меньше 11 цифр!");
       return;
     }
 
@@ -56,6 +64,7 @@ const OrderForm = ({ productPropsToOrder }) => {
       <input
         type="phone"
         name="phone"
+        value={orderState.phone ?? ''}
         maxLength="30"
         placeholder="Контактный телефон"
         onChange={(e) => handleFormChange(e)}
